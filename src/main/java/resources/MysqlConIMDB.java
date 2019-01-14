@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.sql.*;
 import java.util.Properties;
 
-class MysqlCon{
+class MysqlConIMDB {
 
     public static Statement stmt;
     public static Properties prop;
@@ -28,7 +28,7 @@ class MysqlCon{
             user = prop.getProperty("mysqlUser");
             password = prop.getProperty("mysqlPass");
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
+//            Class.forName("com.mysql.cj.jdbc.Driver");
 
             con=DriverManager.getConnection(
                     mysqlUrl,user,password);
@@ -37,7 +37,9 @@ class MysqlCon{
             return stmt;
 
 
-        }catch(Exception e){ System.out.println(e);}
+        }catch(Exception e){
+            System.out.println("Something is wrong with initializing MySQL Statement");
+            System.out.println(e);}
 
         return null;
     }

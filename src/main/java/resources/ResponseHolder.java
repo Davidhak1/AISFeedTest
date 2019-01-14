@@ -4,6 +4,8 @@ import io.restassured.http.Headers;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
+import java.util.concurrent.ExecutionException;
+
 public class ResponseHolder {
     public static Response response;
     public static int responseCode;
@@ -12,7 +14,7 @@ public class ResponseHolder {
 
     public static void setResponse (Response response) {
         ResponseHolder.response = response;
-        System.out.println(getResponseBody());
+        System.out.println(getResponseBody()+"\n");
     }
 
     public static Response getResponse() { return response; }
@@ -36,15 +38,23 @@ public class ResponseHolder {
     public static int lengthOfArray(String filter){
         Response response = ResponseHolder.getResponse();
 
+
         if(getResponseBody().isEmpty())
         {
             return 0;
         }
         else
         {
-            return response.jsonPath().getList(filter).size();
+            try {
+                return response.jsonPath().getList(filter).size();
+            }catch (Exception e){
+                System.out.println("\nPROBABLY WRONG NODE GIVEN");
+                e.printStackTrace();
+                return -1;
+            }
         }
-    }
+        }
+
 
     public static JsonPath getResponseJsonPath() {
         return response.jsonPath();

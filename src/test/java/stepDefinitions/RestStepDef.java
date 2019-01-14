@@ -17,7 +17,9 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
+import model.AISIncentive;
 import model.IMDBVehicle;
+import model.VehicleGroup;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -38,15 +40,12 @@ import static org.hamcrest.CoreMatchers.equalTo;
 
 
 public class RestStepDef extends base {
-    ResponseHolder responseHolder;
-    Response response;
-    RequestSpecification request;
+
     Map<String, Object> responseMap;
     ArrayList<HashMap<String, String>> responseMapArray;
     Map<String, String> body;
     List<String> bodyLikeArray;
 
-    IMDBVehicle imdbVehicle;
 
 
     private String url;
@@ -57,6 +56,11 @@ public class RestStepDef extends base {
         initBase();
         request = RestAssured.with();
 
+    }
+
+    @Then("^testing$")
+    public void testing(){
+        System.out.println("I still can retriece the last feedRunId: "+ getFeedRunId());
     }
 
     @Given("^the server endpoint is (.+)$")
@@ -248,7 +252,13 @@ public class RestStepDef extends base {
         }
     }
 
+    @When("^adding to the api path the vin and (.+) of the vehicle$")
+    public void addingToTheApiPathTheVinAndZipOfTheVehicle(String zip) {
 
+        this.url += getAisIncentive().getVin();
+        this.url += "/"+zip+".json";
+
+    }
 
 }
 

@@ -15,7 +15,7 @@ import java.io.File;
 @CucumberOptions(
 		features = "src/test/java/features",
 		glue="stepDefinitions",
-		tags = {"@Rest_Assured"},
+		tags = {"@AIS1"},
 //        tags = {"@vehicle-controller"},
         plugin={"com.cucumber.listener.ExtentCucumberFormatter:target/html/report.html"},
 		monochrome = true

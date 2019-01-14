@@ -80,4 +80,9 @@ public class AISIncentive {
     public void setCreated(LocalDateTime created) {
         this.created = created;
     }
+
+    @Override
+    public String toString() {
+        return String.format("AISIncentive{id=%d, accountId='%s', feedRunId='%s', vin='%s', make='%s', created=%s}", id, accountId, feedRunId, vin, make, created);
+    }
 }
