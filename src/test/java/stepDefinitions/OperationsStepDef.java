@@ -40,7 +40,6 @@ public class OperationsStepDef extends base {
 
     }
 
-
     @When("^Get the id of the latest successful feedRun for AIS_CA$")
     public void getTheIdOfTheLatestSuccessfulFeedRunForAIS_CA() {
         setFeedRunId(q_c.getTheLatestSuccessfulAISFeedRunIDThatHasRecordsInAISIncentiveTable());
