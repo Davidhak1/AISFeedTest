@@ -2,11 +2,12 @@ Feature: AISFeedDownload
 
   Background:
     Given Initialization
-    Given Oper Initialization
-
-    @AIS1
-  Scenario Outline: Validating that the feed fetches all eligible vehicles from Nexus vehicle table
+    Given Operations Initialization
     When Get the id of the latest successful feedRun for AIS_CA
+
+    @AIS  
+     @DB-Response-validation
+  Scenario Outline: Validating that the feed fetches all eligible vehicles from Nexus vehicle table
     When Get the number of ais CA eligible vehicles for <accountId> and <make>
     When Get the number of aisIncentives with the latest feedRunId <accountId> and <make>
 #    Then The count of aisIncentives should be the same as the number of eligible vehicles
@@ -17,10 +18,10 @@ Feature: AISFeedDownload
       | winegardmotorstc     | Ford       |
 
 
-     @AIS1
+     @AIS  
+     @DB-Response-validation
  Scenario Outline: Validating the response code for a call
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get the id of the latest successful feedRun for AIS_CA
     When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
@@ -34,10 +35,10 @@ Feature: AISFeedDownload
       | afternoondelightdemo | Alfa Romeo | 75240 |
 
 
-      @AIS1
+      @AIS  
+     @DB-Response-validation
 Scenario Outline: Validating the data of vehicleGroup table
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get the id of the latest successful feedRun for AIS_CA
     When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
@@ -64,10 +65,10 @@ Scenario Outline: Validating the data of vehicleGroup table
 
 
 
-     @AIS1
+     @AIS  
+     @DB-Response-validation
 Scenario Outline: Validating the data of vehicleCode table
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get the id of the latest successful feedRun for AIS_CA
     When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
@@ -89,10 +90,10 @@ Scenario Outline: Validating the data of vehicleCode table
       | afternoondelightdemo | Alfa Romeo | 75240 |
 
 
-      @AIS1
+      @AIS  
+     @DB-Response-validation
 Scenario Outline: Validating the data of vehicleGroupMatchDetail table
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get the id of the latest successful feedRun for AIS_CA
     When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
@@ -114,10 +115,10 @@ Scenario Outline: Validating the data of vehicleGroupMatchDetail table
       | pwbmw                | BMW        | 15213 |
 
 
-      @AIS1
+      @AIS  
+     @DB-Response-validation
 Scenario Outline: Validating the data of cashIncentive table
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get the id of the latest successful feedRun for AIS_CA
     When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
@@ -147,10 +148,10 @@ Scenario Outline: Validating the data of cashIncentive table
 
 
 
-      @AIS1
+      @AIS  
+     @DB-Response-validation
 Scenario Outline: Validating the data of vehicleCode table
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get the id of the latest successful feedRun for AIS_CA
     When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
@@ -172,10 +173,10 @@ Scenario Outline: Validating the data of vehicleCode table
       | afternoondelightdemo | Alfa Romeo | 75240 |
 
 
-     @AIS1
+     @AIS  
+     @DB-Response-validation
  Scenario Outline: Validating the data of vehicleGroupMatchDetail table
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get the id of the latest successful feedRun for AIS_CA
     When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
@@ -199,10 +200,10 @@ Scenario Outline: Validating the data of vehicleCode table
 #      | afternoondelightdemo | Alfa Romeo | 75240 |
 
 
-     @AIS1
+     @AIS  
+     @DB-Response-validation
  Scenario Outline: Validating the data of cashIncentive table
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get the id of the latest successful feedRun for AIS_CA
     When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
@@ -221,3 +222,4 @@ Scenario Outline: Validating the data of vehicleCode table
       | afternoondelightdemo | Alfa Romeo | 75240 |
       | pwbmw                | BMW        | 15213 |
       | afternoondelightdemo | Alfa Romeo | 75240 |
+

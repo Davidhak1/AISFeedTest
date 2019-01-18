@@ -33,7 +33,7 @@ public class OperationsStepDef extends base {
     private static int number;
 
 
-    @Given("^Oper Initialization$")
+    @Given("^Operations Initialization$")
     public void operInitialization() {
         System.out.println("INSIDE OPERINIT ---------------");
         initBase();
@@ -43,7 +43,7 @@ public class OperationsStepDef extends base {
     @When("^Get the id of the latest successful feedRun for AIS_CA$")
     public void getTheIdOfTheLatestSuccessfulFeedRunForAIS_CA() {
         setFeedRunId(q_c.getTheLatestSuccessfulAISFeedRunIDThatHasRecordsInAISIncentiveTable());
-        System.out.println("Latest Successfull feedRunID = " + getFeedRunId());
+        System.out.println("Latest Successful feedRunID = " + getFeedRunId());
         System.out.println();
 
     }
@@ -291,7 +291,7 @@ public class OperationsStepDef extends base {
                     break;
                 }
             }
-            Assert.assertTrue(flag, String.format("The db doesn't contain all the hashcodes (particularly:%s) in the json for aisIncentiveId = ", jsonHashcode, getAisIncentive().getId()));
+            Assert.assertTrue(flag, String.format("The db doesn't contain all the hashcodes (particularly:%s) in the json for aisIncentiveId = %s", jsonHashcode, getAisIncentive().getId()));
             System.out.println();
 
         }
@@ -595,5 +595,32 @@ public class OperationsStepDef extends base {
             Assert.assertTrue(flag, String.format("The db doesn't contain all the cashTotals (particularly:%d) in the json for vehicleGroupId = %d ", jsonCashTotal, vehicleGroup.getId()));
             System.out.println();
         }
+    }
+
+    @Then("^the vin in the response should be the same as in the requested url$")
+    public void theVinInTheResponseShouldBeTheSameAsInTheRequestedUrl() {
+        String responseVin = responseHolder.getResponseJsonPath().get("response[0].vin");
+        Assert.assertEquals(responseVin,getAisIncentive().getVin(), "The vin of AIS incentive is not equal to the vin in the response");
+    }
+
+
+
+
+    //------------------Disclaimer Code---------------------------------------------------------------------------------
+
+    @Then("^we should have a programDescription for every program in db$")
+    public void weShouldHaveAProgramDescriptionForEveryCashProgram() {
+        int programCount = q_a.getTheNumberOfcashIncentivesThatHaveProgram(getFeedRunId());
+        int programDescrCount = q_a.getTheNumberOfcashIncentivesThatHaveProgramAndHaveProgramDescription(getFeedRunId());
+
+        System.out.println("\n"+programCount+" = " + programDescrCount);
+
+        Assert.assertTrue(programCount!=0,"There are probably no aisIncentives with feedRunId = " + getFeedRunId() +
+                ". Please rerun the feed");
+
+        Assert.assertEquals(programCount,programDescrCount,String.format("The number of cashIncentivea in db that have a program" +
+                "is not equal to the number of cashIncentive that have program and programDescription. programCount:%d, " +
+                "programDescriptionCount:%d",programCount,programDescrCount));
+
     }
 }

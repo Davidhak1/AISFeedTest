@@ -7,10 +7,9 @@ import java.sql.Statement;
 
 public class QueriesCombined {
 
-    private MysqlConIMDB mysqlCon= new MysqlConIMDB();
+    private MysqlConIMDB mysqlCon = new MysqlConIMDB();
 
-    public String getTheLatestSuccessfulAISFeedRunIDThatHasRecordsInAISIncentiveTable()
-    {
+    public String getTheLatestSuccessfulAISFeedRunIDThatHasRecordsInAISIncentiveTable() {
         Statement stmt = mysqlCon.getStatement();
         String feedRunId = null;
 
@@ -23,20 +22,16 @@ public class QueriesCombined {
                 feedRunId = rs.getString(1);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
             e.printStackTrace();
-        }
-
-        finally{
+        } finally {
             mysqlCon.endCon();
-            if(feedRunId==null){
+            if (feedRunId == null) {
                 System.out.printf("%n-No feeds found with feedRunId = %s-%n", feedRunId);
             }
             return feedRunId;
         }
 
     }
-
-
 }

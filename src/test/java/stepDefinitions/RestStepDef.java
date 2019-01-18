@@ -76,7 +76,6 @@ public class RestStepDef extends base {
     }
 
     @When("^adding api path for get request (.+)$")
-    //REMOVE
     public void adding_api_path_for_the_request(String apiUrl) throws Throwable {
         this.url += apiUrl;
     }
@@ -120,7 +119,7 @@ public class RestStepDef extends base {
     @When("^perform the get request$")
     public void perform_the_request() throws Throwable {
 
-        System.out.println(this.url);
+        System.out.println("\n"+this.url);
         response = request.when().get(this.url);
         responseHolder.setResponse(response);
     }
@@ -258,6 +257,12 @@ public class RestStepDef extends base {
         this.url += getAisIncentive().getVin();
         this.url += "/"+zip+".json";
 
+    }
+
+    @When("^adding to the api path the vin of the vehicle and the latestFeedRunId$")
+    public void addingToTheApiPathTheVinOfTheVehicleAndTheLatestFeedRunId() {
+        this.url += "/"+getAisIncentive().getVin();
+        this.url += "/"+getFeedRunId();
     }
 
 }

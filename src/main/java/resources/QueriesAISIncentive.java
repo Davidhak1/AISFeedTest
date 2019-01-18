@@ -10,7 +10,7 @@ import java.util.List;
 
 public class QueriesAISIncentive {
 
-    private MysqlConIMDB mysqlCon= new MysqlConIMDB();
+    private MysqlConAIS mysqlCon= new MysqlConAIS();
 
 
     public AISIncentive getAisIncentivesById(long id){
@@ -265,8 +265,6 @@ public class QueriesAISIncentive {
 
     }
 
-
-
     public List<VehicleCode> getVehicleCodesByVehicleGroupId(long vehicleGroupId){
         Statement stmt = mysqlCon.getStatement();
         List<VehicleCode> vehicleCodes = new ArrayList<VehicleCode>();
@@ -342,7 +340,59 @@ public class QueriesAISIncentive {
         return null;
     }
 
+    public int getTheNumberOfcashIncentivesThatHaveProgram(String feedRunId){
+        Statement stmt = mysqlCon.getStatement();
+        int count = 0;
 
+        try {
+
+            ResultSet rs = stmt.executeQuery(String.format("select * from cashIncentive ci join program p on p.id = ci.programId " +
+                    "join vehicleGroup vg on vg.id = ci.vehicleGroupId join aisIncentive ai on ai.id = vg.aisIncentiveId " +
+                    "where ci.programId is not null and ai.feedRunId = '%s';", feedRunId ));
+
+            while (rs.next()) {
+                count++;
+            }
+
+        }catch (Exception e){
+            System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
+            e.printStackTrace();
+        }
+
+        finally{
+            mysqlCon.endCon();
+            return count;
+        }
+
+
+    }
+
+    public int getTheNumberOfcashIncentivesThatHaveProgramAndHaveProgramDescription(String feedRunId){
+        Statement stmt = mysqlCon.getStatement();
+        int count = 0;
+
+        try {
+
+            ResultSet rs = stmt.executeQuery(String.format("select * from cashIncentive ci join program p on p.id = ci.`programId` " +
+                    "join programDescription pd on p.`programID` = pd.`programID` join vehicleGroup vg on vg.id = ci.`vehicleGroupId` " +
+                    "join aisIncentive ai on ai.id = vg.aisIncentiveId where ci.programId is not null and ai.feedRunId = '%s';", feedRunId ));
+
+            while (rs.next()) {
+                count++;
+            }
+
+        }catch (Exception e){
+            System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
+            e.printStackTrace();
+        }
+
+        finally{
+            mysqlCon.endCon();
+            return count;
+        }
+
+
+    }
 
 
 }

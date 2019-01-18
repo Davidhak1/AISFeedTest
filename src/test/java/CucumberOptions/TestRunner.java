@@ -15,11 +15,14 @@ import java.io.File;
 @CucumberOptions(
 		features = "src/test/java/features",
 		glue="stepDefinitions",
-		tags = {"@AIS1"},
-//        tags = {"@vehicle-controller"},
+        tags = {"@AIS"},
+//		  tags = {"@DB-Response-validation"},
+//        tags = {"@Incentives-Services-API"},
         plugin={"com.cucumber.listener.ExtentCucumberFormatter:target/html/report.html"},
-		monochrome = true
+        strict = false,
+        dryRun = false
 )
+
 public class TestRunner extends AbstractTestNGCucumberTests  {
 	@AfterClass
 	public static void setup() {
