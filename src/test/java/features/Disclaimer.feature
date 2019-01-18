@@ -3,6 +3,7 @@ Feature: AISFeedDownload
   Background:
     Given Initialization
     Given Operations Initialization
+    Given Disclaimer Initialization
     Given Get the id of the latest successful feedRun for AIS_CA
 
   @AIS
@@ -18,15 +19,15 @@ Feature: AISFeedDownload
   @AIS
   @AIS-DISCLAIMER-1
   Scenario: Validating that all programs from response exist in our db 1
-    Given the server endpoint is https://incentives.homenetiol.com/GetPrograms?format=json
+    Given the server endpoint is https://incentives.homenetiol.com/v2.6/CA/GetPrograms
     When adding following headers
       | AIS-ApiKey   | 85C88437-7536-48FE-8914-4383CED65BA2 |
       | Content-Type | application/json                     |
     When perform the get request
-    Then fetch all the programIds from the response
-#    Then we should have all the programs in our db
-
-
+    When fetch all the programIds from the response
+    Then There should be no duplicate programIds in the json response
+    Then we should have all the programs in our db
+#    Then we should have a programDescription for every program in db
 
 
 

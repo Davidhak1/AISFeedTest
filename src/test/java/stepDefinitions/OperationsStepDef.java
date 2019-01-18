@@ -606,21 +606,5 @@ public class OperationsStepDef extends base {
 
 
 
-    //------------------Disclaimer Code---------------------------------------------------------------------------------
 
-    @Then("^we should have a programDescription for every program in db$")
-    public void weShouldHaveAProgramDescriptionForEveryCashProgram() {
-        int programCount = q_a.getTheNumberOfcashIncentivesThatHaveProgram(getFeedRunId());
-        int programDescrCount = q_a.getTheNumberOfcashIncentivesThatHaveProgramAndHaveProgramDescription(getFeedRunId());
-
-        System.out.println("\n"+programCount+" = " + programDescrCount);
-
-        Assert.assertTrue(programCount!=0,"There are probably no aisIncentives with feedRunId = " + getFeedRunId() +
-                ". Please rerun the feed");
-
-        Assert.assertEquals(programCount,programDescrCount,String.format("The number of cashIncentivea in db that have a program" +
-                "is not equal to the number of cashIncentive that have program and programDescription. programCount:%d, " +
-                "programDescriptionCount:%d",programCount,programDescrCount));
-
-    }
 }

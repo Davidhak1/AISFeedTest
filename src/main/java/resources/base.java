@@ -15,6 +15,7 @@ public class base {
 
     public Properties prop;
     public QueriesAISIncentive q_a;
+    public QueriesDisclaimer q_d;
     public QueriesNexusVehicle q_n;
     public QueriesCombined q_c;
 
@@ -38,6 +39,7 @@ public class base {
         q_a = new QueriesAISIncentive();
         q_n = new QueriesNexusVehicle();
         q_c = new QueriesCombined();
+        q_d = new QueriesDisclaimer();
 
 
         initProp();
