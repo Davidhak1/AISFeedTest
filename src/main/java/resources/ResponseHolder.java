@@ -14,7 +14,7 @@ public class ResponseHolder {
 
     public static void setResponse (Response response) {
         ResponseHolder.response = response;
-//        System.out.println(getResponseBody()+"\n");
+        System.out.println(getResponseBody().substring(1,1000)+".....\n");
     }
 
     public static Response getResponse() { return response; }

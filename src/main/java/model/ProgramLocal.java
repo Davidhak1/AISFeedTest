@@ -1,11 +1,13 @@
 package model;
 
-public class programLocal {
+public class ProgramLocal {
+    private long id;
     private long programID;
     private long groupID;
     private String compatibleProgramsString;
 
-    public programLocal(long programID, long groupID, String compatibleProgramsString) {
+    public ProgramLocal(long id, long programID, long groupID, String compatibleProgramsString) {
+        this.id = id;
         this.programID = programID;
         this.groupID = groupID;
         this.compatibleProgramsString = compatibleProgramsString;
@@ -35,9 +37,17 @@ public class programLocal {
         this.compatibleProgramsString = compatibleProgramsString;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
-        return String.format("programLocal{programID=%d, groupID=%d, compatibleProgramsString='%s'}",
-                programID, groupID, compatibleProgramsString);
+        return String.format("programLocal{ id=%d, programID=%d, groupID=%d, compatibleProgramsString='%s'}",
+                id, programID, groupID, compatibleProgramsString);
     }
 }

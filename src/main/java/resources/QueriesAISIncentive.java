@@ -373,8 +373,8 @@ public class QueriesAISIncentive {
 
         try {
 
-            ResultSet rs = stmt.executeQuery(String.format("select * from cashIncentive ci join program p on p.id = ci.`programId` " +
-                    "join programDescription pd on p.`programID` = pd.`programID` join vehicleGroup vg on vg.id = ci.`vehicleGroupId` " +
+            ResultSet rs = stmt.executeQuery(String.format("select * from cashIncentive ci join program p on p.id = ci.programId " +
+                    "join programLocal pl on p.`programID` = pl.`programID` join vehicleGroup vg on vg.id = ci.`vehicleGroupId` " +
                     "join aisIncentive ai on ai.id = vg.aisIncentiveId where ci.programId is not null and ai.feedRunId = '%s';", feedRunId ));
 
             while (rs.next()) {

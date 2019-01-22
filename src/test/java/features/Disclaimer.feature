@@ -19,43 +19,33 @@ Feature: AISFeedDownload
   @AIS
   @AIS-DISCLAIMER-1
   Scenario: Validating that all programs from response exist in our db 1
-    Given the server endpoint is https://incentives.homenetiol.com/v2.6/CA/GetPrograms
+    Given the server endpoint is https://incentives.homenetiol.com/GetPrograms?format=json
     When adding following headers
       | AIS-ApiKey   | 85C88437-7536-48FE-8914-4383CED65BA2 |
       | Content-Type | application/json                     |
     When perform the get request
     When fetch all the programIds from the response
     Then There should be no duplicate programIds in the json response
-    Then we should have all the programs in our db
-#    Then we should have a programDescription for every program in db
+    Then all the programs that are in json response should be saved in ais_insentives db
+    Then we should have a programLocal for every program in db
+    Then we should have a programLocalDescription for every programLocal in db
 
-
-
-  @AIS
-  @AIS-DISCLAIMER
-  Scenario: Validating disclaimer API 2
-    Given the server endpoint is https://incentives.homenetiol.com/v2.6/CA/GetPrograms
-    When adding following headers
-      | AIS-ApiKey   | 85C88437-7536-48FE-8914-4383CED65BA2 |
-      | Content-Type | application/json                     |
-    When perform the get request
-    Then the response code should be 200
-    Then we should have a programDescription for every program in db
 
     @AIS
     @AIS-DISCLAIMER
-    Scenario: Validating if the data in our db matches the data of the response
-      Given the server endpoint is https://incentives.homenetiol.com/v2.6/CA/GetPrograms
+    Scenario: Validating if the data in our db matches the data of the response (IMPORTANT TEST)
+      Given the server endpoint is https://incentives.homenetiol.com/GetPrograms?format=json
       When adding following headers
         | AIS-ApiKey   | 85C88437-7536-48FE-8914-4383CED65BA2 |
         | Content-Type | application/json                     |
       When perform the get request
-      When extract 20 random programDescriptions from json response
-      Then find the programId in programDescription table
-      Then the compatibleProgramsString should be the same in the response and db
-      Then the consumer should be the same in the response and db
-      Then the dealer should be the same in the response and db
-      Then the short-title should be the same in the response and db
-      Then the title should be the same in the response and db
-      Then the taxStatus should be the same in the response and db
+      Then the response code should be 200
+      When extract 20 random programs from json response
+      Then the according programs should exist in ais_incentives db programDescription table
+      Then the compatibleProgramsString field should contain all programs that are in json response
+      Then the consumer field should be the same in the response and db
+      Then the dealer field should be the same in the response and db
+      Then the short-title field should be the same in the response and db
+      Then the title field should be the same in the response and db
+      Then the taxStatus field should be the same in the response and db
 

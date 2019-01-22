@@ -3,6 +3,11 @@ package resources;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.*;
 
 public class Utils {
@@ -22,6 +27,27 @@ public class Utils {
         return setToReturn;
     }
 
+    public static String clobToString(Clob data) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            Reader reader = null;
+            try {
+                reader = data.getCharacterStream();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            BufferedReader br = new BufferedReader(reader);
+
+            String line;
+            while(null != (line = br.readLine())) {
+                sb.append(line);
+            }
+            br.close();
+        } catch (IOException e) {
+            // handle this exception
+        }
+        return sb.toString();
+    }
 
 //    public static void main(String[] args) {
 //
