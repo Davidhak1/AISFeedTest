@@ -1,13 +1,9 @@
 package model;
 
 import resources.Utils;
-import sun.jvm.hotspot.runtime.Bytes;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
+
 import java.sql.Clob;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 

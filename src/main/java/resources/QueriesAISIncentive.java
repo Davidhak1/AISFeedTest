@@ -122,7 +122,7 @@ public class QueriesAISIncentive {
 
             while (rs.next()) {
                 aisIncentives.add(new AISIncentive(rs.getLong(1), rs.getString(2),rs.getString(3),
-                        rs.getString(4),rs.getString(5),rs.getTimestamp(6)));
+                        rs.getString(5),rs.getString(6),rs.getTimestamp(7)));
             }
 
             if(aisIncentives.size()>0)
@@ -171,10 +171,11 @@ public class QueriesAISIncentive {
                     "aisIncentiveId = '%s';", aisIncentiveID ));
 
             while (rs.next()) {
-                vehicleGroups.add(new VehicleGroup(rs.getLong(1), rs.getString(2),rs.getString(3),
-                        rs.getString(4),rs.getLong(5),rs.getInt(6),rs.getInt(7),
-                        rs.getLong(8),rs.getString(9),rs.getString(10)
-                        ,rs.getString(11), rs.getTimestamp(12)));
+                vehicleGroups.add(new VehicleGroup(rs.getLong(1), rs.getString(2), rs.getString(3),
+                        rs.getString(4),rs.getString(5),
+                        rs.getString(6),rs.getLong(7),rs.getInt(8),rs.getInt(9),
+                        rs.getLong(10),rs.getString(11),rs.getString(12)
+                        ,rs.getString(13), rs.getTimestamp(14)));
             }
 
             if(vehicleGroups.size()>0)

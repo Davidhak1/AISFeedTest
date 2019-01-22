@@ -237,7 +237,7 @@ public class OperationsStepDef extends base {
             boolean flag = false;
             for (VehicleGroup dbvg : dbVehicleGroups) {
                 System.out.println("\n" + i + ") db marketingYear:" + dbvg.getMarketingYear());
-                jsonMarketingYear = Integer.parseInt(responseJsonPath.get(String.format("response[%d].marketingYear", i)));
+                jsonMarketingYear = Integer.parseInt(responseJsonPath.get(String.format("response[%d].marketingYear", i)).toString());
                 System.out.println(i + ") js marketingYear:" + jsonMarketingYear);
                 if (dbvg.getMarketingYear() == jsonMarketingYear) {
                     dbVehicleGroups.remove(dbvg);

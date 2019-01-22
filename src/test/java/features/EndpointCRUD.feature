@@ -4,7 +4,7 @@ Feature: Endpoint for CRUD Operations
     Given Initialization
     Given Operations Initialization
 
-  @AIS
+  @AIS-Depreciated
   @Incentives-Services-API
   Scenario Outline: Validating if the endpoint is up and running
     Given the server endpoint is http://vtqainv-incentivessvc01.dealer.ddc:9620/incentives-services/rest/api/v1/aisRawIncentives/retrieveIncentivesByVin
@@ -19,7 +19,7 @@ Feature: Endpoint for CRUD Operations
       | afternoondelightdemo | Alfa Romeo |
       | pwbmw                | BMW        |
 
-  @AIS
+  @AIS-Depreciated
   @Incentives-Services-API
   Scenario Outline: Validating if the endpoint is returning the right data
     Given the server endpoint is http://vtqainv-incentivessvc01.dealer.ddc:9620/incentives-services/rest/api/v1/aisRawIncentives/retrieveIncentivesByVin
