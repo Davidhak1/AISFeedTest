@@ -254,15 +254,15 @@ public class RestStepDef extends base {
     @When("^adding to the api path the vin and (.+) of the vehicle$")
     public void addingToTheApiPathTheVinAndZipOfTheVehicle(String zip) {
 
-        this.url += getAisIncentive().getVin();
+        this.url += getVehicleGroup().getVin();
         this.url += "/"+zip+".json";
 
     }
 
     @When("^adding to the api path the vin of the vehicle and the latestFeedRunId$")
     public void addingToTheApiPathTheVinOfTheVehicleAndTheLatestFeedRunId() {
-        this.url += "/"+getAisIncentive().getVin();
-        this.url += "/"+getFeedRunId();
+//        this.url += "/"+getAisIncentive().getVin();
+//        this.url += "/"+getFeedRunId();
     }
 
 }

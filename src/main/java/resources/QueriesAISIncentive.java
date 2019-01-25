@@ -38,6 +38,34 @@ public class QueriesAISIncentive {
 
     }
 
+    public VehicleGroup getVehicleGroupByID(long id){
+        Statement stmt = mysqlCon.getStatement();
+
+        try {
+
+            ResultSet rs = stmt.executeQuery(String.format("select * from vehicleGroup where id = '%d';", id));
+
+            while (rs.next()) {
+                return new VehicleGroup(rs.getLong(1), rs.getString(2),
+                        rs.getString(3),rs.getString(4),
+                        rs.getString(5),rs.getLong(6),rs.getInt(7),rs.getInt(8),
+                        rs.getLong(9),rs.getString(10),rs.getString(11),
+                        rs.getString(12), rs.getTimestamp(13));
+            }
+
+        }catch (Exception e){
+            System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
+            e.printStackTrace();
+        }
+
+        finally{
+            mysqlCon.endCon();
+        }
+        System.out.println("No vehicleGroup found with 'id' = "+id);
+        return null;
+
+    }
+
     public int numberOfAisIncentivesWithFeedRunID(String feedRunID)    {
         Statement stmt = mysqlCon.getStatement();
         int count = 0;
@@ -87,14 +115,17 @@ public class QueriesAISIncentive {
 
     }
 
-    public int numberOfAisIncentivesWithFeedRunIDAndAcccountIdAndMake(String feedRunID, String accountId, String make) {
+    public int numberOfVehicleGroupsWithDistinctVinByFeedRunIdAccountIdAndMake(String feedRunID, String accountId, String make) {
         Statement stmt = mysqlCon.getStatement();
         int count = 0;
 
         try {
 
-            ResultSet rs = stmt.executeQuery(String.format("select * from aisIncentive where feedRunId = '%s'" +
-                    "and accountId = '%s' and make = '%s';", feedRunID, accountId, make));
+            ResultSet rs = stmt.executeQuery(String.format("select  vg.id, vg.vin, vg.aisIncentiveId, vg.aisVehicleGroupId," +
+                    " vg.vehicleGroupName, vg.vehicleGroupId, vg.modelYear, vg.marketingYear, vg.regionId, vg.hash, vg.vehicleHints," +
+                    " vg.exclusionHints, vg.created from aisIncentive ai join vehicleGroup vg on ai.id = vg.aisIncentiveId" +
+                    " where ai.feedRunId = '%s' and ai.accountId = '%s' and ai.make = '%s' " +
+                    "group by vg.vin;", feedRunID, accountId, make));
 
             while (rs.next()) {
                 count++;
@@ -112,7 +143,7 @@ public class QueriesAISIncentive {
 
     }
 
-    public List<AISIncentive> getAisIncentivesByFeedRunIdAccountIdAndMake(String feedRunId, String accountId, String make) {
+    public AISIncentive getAisIncentiveByFeedRunIdAccountIdAndMake(String feedRunId, String accountId, String make) {
         Statement stmt = mysqlCon.getStatement();
         List<AISIncentive> aisIncentives = new ArrayList<AISIncentive>();
         try {
@@ -121,12 +152,11 @@ public class QueriesAISIncentive {
 
 
             while (rs.next()) {
-                aisIncentives.add(new AISIncentive(rs.getLong(1), rs.getString(2),rs.getString(3),
-                        rs.getString(5),rs.getString(6),rs.getTimestamp(7)));
+                return new AISIncentive(rs.getLong(1), rs.getString(2),rs.getString(3),
+                        rs.getString(4),rs.getString(5),rs.getTimestamp(6));
             }
 
-            if(aisIncentives.size()>0)
-                return aisIncentives;
+
         }catch (Exception e){
             System.out.println("------------------EXCEPTION IN THE QUERIES CLASS------------------");
             e.printStackTrace();
@@ -138,14 +168,14 @@ public class QueriesAISIncentive {
         return null;
     }
 
-    public int getNumberOfVehicleGroupsByAISInentiveId(Long aisIncentiveID) {
+    public int getNumberOfVehicleGroupsByAISInentiveIdAndVin(Long aisIncentiveID,String vin) {
         Statement stmt = mysqlCon.getStatement();
         int count = 0;
 
         try {
 
             ResultSet rs = stmt.executeQuery(String.format("select * from vehicleGroup where " +
-                    "aisIncentiveId = '%s';", aisIncentiveID ));
+                    "aisIncentiveId = '%s' and vin = '%s';", aisIncentiveID, vin ));
 
             while (rs.next()) {
                 count++;
@@ -171,11 +201,11 @@ public class QueriesAISIncentive {
                     "aisIncentiveId = '%s';", aisIncentiveID ));
 
             while (rs.next()) {
-                vehicleGroups.add(new VehicleGroup(rs.getLong(1), rs.getString(2), rs.getString(3),
-                        rs.getString(4),rs.getString(5),
-                        rs.getString(6),rs.getLong(7),rs.getInt(8),rs.getInt(9),
-                        rs.getLong(10),rs.getString(11),rs.getString(12)
-                        ,rs.getString(13), rs.getTimestamp(14)));
+                vehicleGroups.add(new VehicleGroup(rs.getLong(1), rs.getString(2),
+                        rs.getString(3),rs.getString(4),
+                        rs.getString(5),rs.getLong(6),rs.getInt(7),rs.getInt(8),
+                        rs.getLong(9),rs.getString(10),rs.getString(11),
+                        rs.getString(12), rs.getTimestamp(13)));
             }
 
             if(vehicleGroups.size()>0)
@@ -188,6 +218,34 @@ public class QueriesAISIncentive {
             mysqlCon.endCon();
         }
         System.out.println(String.format("No vehicle groups with 'aisIncentiveId'= %d", aisIncentiveID ));
+        return null;
+    }
+
+    public List<VehicleGroup> getVehicleGroupsByAISIncentiveIdAndVin(String aisIncentiveID, String vin) {
+        Statement stmt = mysqlCon.getStatement();
+        List<VehicleGroup> vehicleGroups = new ArrayList<VehicleGroup>();
+        try {
+            ResultSet rs = stmt.executeQuery(String.format("select * from vehicleGroup where " +
+                    "aisIncentiveId = '%s' AND vin = '%s';", aisIncentiveID,vin ));
+
+            while (rs.next()) {
+                vehicleGroups.add(new VehicleGroup(rs.getLong(1), rs.getString(2),
+                        rs.getString(3),rs.getString(4),
+                        rs.getString(5),rs.getLong(6),rs.getInt(7),rs.getInt(8),
+                        rs.getLong(9),rs.getString(10),rs.getString(11),
+                        rs.getString(12), rs.getTimestamp(13)));
+            }
+
+            if(vehicleGroups.size()>0)
+                return vehicleGroups;
+        }catch (Exception e){
+            System.out.println("------------------EXCEPTION IN THE QUERIES CLASS------------------");
+            e.printStackTrace();
+        }
+        finally{
+            mysqlCon.endCon();
+        }
+        System.out.println(String.format("No vehicle groups with 'aisIncentiveId'= %d and 'vin'= %s", aisIncentiveID, vin));
         return null;
     }
 

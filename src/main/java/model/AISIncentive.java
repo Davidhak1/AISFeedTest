@@ -7,24 +7,24 @@ public class AISIncentive {
     private long id;
     private String accountId;
     private String feedRunId;
-    private String vin;
+    private String zipCode;
     private String make;
     private LocalDateTime created;
 
-    public AISIncentive(long id, String accountId, String feedRunId, String vin, String make, LocalDateTime created) {
+    public AISIncentive(long id, String accountId, String feedRunId, String zipCode, String make, LocalDateTime created) {
         this.id = id;
         this.accountId = accountId;
         this.feedRunId = feedRunId;
-        this.vin = vin;
+        this.zipCode = zipCode;
         this.make = make;
         this.created = created;
     }
 
-    public AISIncentive(long id, String accountId, String feedRunId, String vin, String make, Timestamp created) {
+    public AISIncentive(long id, String accountId, String feedRunId, String zipCode, String make, Timestamp created) {
         this.id = id;
         this.accountId = accountId;
         this.feedRunId = feedRunId;
-        this.vin = vin;
+        this.zipCode = zipCode;
         this.make = make;
 
         if(created!=null)
@@ -57,12 +57,12 @@ public class AISIncentive {
         this.feedRunId = feedRunId;
     }
 
-    public String getVin() {
-        return vin;
+    public String getzipCode() {
+        return zipCode;
     }
 
-    public void setVin(String vin) {
-        this.vin = vin;
+    public void setzipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 
     public String getMake() {
@@ -83,6 +83,6 @@ public class AISIncentive {
 
     @Override
     public String toString() {
-        return String.format("AISIncentive{id=%d, accountId='%s', feedRunId='%s', vin='%s', make='%s', created=%s}", id, accountId, feedRunId, vin, make, created);
+        return String.format("AISIncentive{id=%d, accountId='%s', feedRunId='%s', zipCode='%s', make='%s', created=%s}", id, accountId, feedRunId, zipCode, make, created);
     }
 }

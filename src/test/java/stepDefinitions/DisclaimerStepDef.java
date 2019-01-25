@@ -118,18 +118,20 @@ public class DisclaimerStepDef extends base {
 
 
 
-//        jsonPrograms.add(401458);
-//        jsonPrograms.add(371409);
+//        jsonPrograms.add(153029);
+//        jsonPrograms.add(34310);
 //
-//        for (int i = 0; i < size; i++) {
-//            jsonPrograms.add(allJsonProgramIDs.get(new Random().nextInt(allJsonProgramIDs.size())));
-//        }
-//
-//        jsonPrograms.add(453968);
-//        jsonPrograms.add(304325);
+        for (int i = 0; i < size; i++) {
+            jsonPrograms.add(allJsonProgramIDs.get(new Random().nextInt(allJsonProgramIDs.size())));
+        }
+////
 
 
-        jsonPrograms.addAll(allJsonProgramIDs);
+
+//        jsonPrograms.addAll(allJsonProgramIDs);
+//
+//        jsonPrograms.remove(jsonPrograms.indexOf(34310));
+
 
         System.out.println("The size of programs being tested = " + jsonPrograms.size());
         System.out.println("\nJson random programs = " + jsonPrograms);
@@ -138,24 +140,28 @@ public class DisclaimerStepDef extends base {
 
     @Then("^the according programs should exist in ais_incentives db programDescription table$")
     public void theAccordingProgramsShouldExistInAis_incentivesDbProgramDescriptionTable() {
+        int count =jsonPrograms.size();
+        int totalSize = count;
+
         for (Integer i : jsonPrograms) {
-            int count = 0;
+            int count1 = 0;
             boolean exists = false;
             ProgramLocal pl= null;
-            while(!exists && count < 3) {
+            while(!exists && count1 < 3) {
                 pl = q_d.getProgramLocalByProgramID(i);
                 if(pl!=null)
                     exists = true;
-                count++;
+                count1++;
             }
-            Assert.assertNotNull(pl, String.format(" There is no record for programID %d in the 'ProgramLocal' table in our db", i));
-            System.out.println(pl.getProgramID());
+            Assert.assertNotNull(pl, String.format(" There is no record for programID = %d in the 'ProgramLocal' table in our db", i));
+            System.out.println(--count + ")" + (totalSize-count) +")"+ pl.getProgramID());
         }
     }
 
     @Then("^the compatibleProgramsString field should contain all programs that are in json response$")
     public void theCompatibleProgramsStringShouldBeTheSameInTheResponseAndDb() {
-
+        int count =jsonPrograms.size();
+        int totalSize = count;
         List<Integer> jsonCompatiblePrograms = new ArrayList<Integer>();
 
         for (Integer i : jsonPrograms) {
@@ -167,6 +173,7 @@ public class DisclaimerStepDef extends base {
                 Assert.assertTrue(pl.getCompatibleProgramsString().contains(in.toString()), String.format(" Program: %d does" +
                         " not contain compatibilityProgram [%d] in 'programLocal' table", i, in));
             }
+            System.out.println(--count + ")" + (totalSize-count) + ") CompatibilityPrograms Checked for " + i);
         }
 
     }
@@ -210,8 +217,8 @@ public class DisclaimerStepDef extends base {
             String[] jsonPhrases = jsonDealer.split("\n");
 
             for (String phrase : jsonPhrases) {
-                Assert.assertTrue(dbDealer.contains(phrase), String.format("%nThe dealer field is not same for programID = %d." +
-                        " %nIn the response %n[%s], %nIn the db %n[%s]%n%nDB doesn't contain phrase [%s]", i, jsonDealer, dbDealer, phrase));
+                Assert.assertTrue(dbDealer.contains(phrase.trim()), String.format("%nThe dealer field is not same for programID = %d. DB doesn't contain phrase [%s]" +
+                        " %nIn the response %n[%s], %nIn the db %n[%s]%n%n ", i,phrase, jsonDealer, dbDealer));
 
 //                System.out.println(String.format("%nThe programID = %d." +
 //                        " %nIn the response %n[%s], %nIn the db %n[%s]%n%nDB doesn't contain phrase [%s]",i,jsonDealer,dbDealer,ss));

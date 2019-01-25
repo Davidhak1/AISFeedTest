@@ -17,7 +17,7 @@ Feature: AISFeedDownload
     Then the response code should be 200
 
   @AIS
-  @AIS-DISCLAIMER-1
+  @AIS-DISCLAIMER
   Scenario: Validating that all programs from response exist in our db 1
     Given the server endpoint is https://incentives.homenetiol.com/GetPrograms?format=json
     When adding following headers
@@ -26,7 +26,7 @@ Feature: AISFeedDownload
     When perform the get request
     When fetch all the programIds from the response
     Then There should be no duplicate programIds in the json response
-    Then all the programs that are in json response should be saved in ais_insentives db
+#    Then all the programs that are in json response should be saved in ais_insentives db
     Then we should have a programLocal for every program in db
     Then we should have a programLocalDescription for every programLocal in db
 

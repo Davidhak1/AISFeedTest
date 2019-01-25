@@ -9,8 +9,7 @@ Feature: AISFeedDownload
      @DB-Response-validation
   Scenario Outline: Validating that the feed fetches all eligible vehicles from Nexus vehicle table
     When Get the number of ais CA eligible vehicles for <accountId> and <make>
-    When Get the number of aisIncentives with the latest feedRunId <accountId> and <make>
-#    Then The count of aisIncentives should be the same as the number of eligible vehicles
+    When Get the number of vehicles having vehicleGroup in DB with the latest feedRunId <accountId> and <make>
     Examples:
       | accountId            | make       |
       | afternoondelightdemo | Alfa Romeo |
@@ -22,7 +21,8 @@ Feature: AISFeedDownload
      @DB-Response-validation
  Scenario Outline: Validating the response code for a call
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
+    When get the aisIncentive by the feedRunId, <make> and <accountId>
+    When choose a random vehicleGroup with the aisIncentiveId of the aisIncentive
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
     When adding to the api path the vin and <zip> of the vehicle
@@ -37,9 +37,10 @@ Feature: AISFeedDownload
 
       @AIS  
      @DB-Response-validation
-Scenario Outline: Validating the data of vehicleGroup table
+Scenario Outline: Validating the data of vehicleGroup table 1
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
+    When get the aisIncentive by the feedRunId, <make> and <accountId>
+    When choose a random vehicleGroup with the aisIncentiveId of the aisIncentive
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
     When adding to the api path the vin and <zip> of the vehicle
@@ -69,14 +70,15 @@ Scenario Outline: Validating the data of vehicleGroup table
      @DB-Response-validation
 Scenario Outline: Validating the data of vehicleCode table
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
+    When get the aisIncentive by the feedRunId, <make> and <accountId>
+    When choose a random vehicleGroup with the aisIncentiveId of the aisIncentive
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
     When adding to the api path the vin and <zip> of the vehicle
     When perform the get request
     Then the response code should be 200
     Then the amount of vehicleGroups should be the same in the response and db
-    Then get number 0 vehicleGroup of the response
+    Then get number 1 vehicleGroup of the response
     Then the amount of vehicleCodes with those vehicleGroupId should be the same in the response and db
     Then the acodes should be the same in the response and db
     Then the modelCodes should be the same in the response and db
@@ -90,36 +92,38 @@ Scenario Outline: Validating the data of vehicleCode table
       | afternoondelightdemo | Alfa Romeo | 75240 |
 
 
-      @AIS  
-     @DB-Response-validation
-Scenario Outline: Validating the data of vehicleGroupMatchDetail table
-    Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
-    When adding following headers
-      | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
-    When adding to the api path the vin and <zip> of the vehicle
-    When perform the get request
-    Then the response code should be 200
-    Then the amount of vehicleGroups should be the same in the response and db
-    Then get number 0 vehicleGroup of the response
-    Then the amount of vehicleMatchDetails with those vehicleGroupId should be the same in the response and db
-    Then the vehicleElements should be the same in the response and db
-    Then the vehicleHints should be the same in the response and db
-    Then the valuesInVehicleGroup should be the same in the response and db
-    Then the vehicleHintSources should be the same in the response and db
-    Then the vehicleMatchStatuses should be the same in the response and db
-
-    Examples:
-      | accountId            | make       | zip   |
-      | pwbmw                | BMW        | 15213 |
-      | pwbmw                | BMW        | 15213 |
+#      @AIS
+#     @DB-Response-validation
+#Scenario Outline: Validating the data of vehicleGroupMatchDetail table
+#    Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
+#    When get the aisIncentive by the feedRunId, <make> and <accountId>
+#    When choose a random vehicleGroup with the aisIncentiveId of the aisIncentive
+#    When adding following headers
+#      | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
+#    When adding to the api path the vin and <zip> of the vehicle
+#    When perform the get request
+#    Then the response code should be 200
+#    Then the amount of vehicleGroups should be the same in the response and db
+#    Then get number 0 vehicleGroup of the response
+#    Then the amount of vehicleMatchDetails with those vehicleGroupId should be the same in the response and db
+#    Then the vehicleElements should be the same in the response and db
+#    Then the vehicleHints should be the same in the response and db
+#    Then the valuesInVehicleGroup should be the same in the response and db
+#    Then the vehicleHintSources should be the same in the response and db
+#    Then the vehicleMatchStatuses should be the same in the response and db
+#
+#    Examples:
+#      | accountId            | make       | zip   |
+#      | pwbmw                | BMW        | 15213 |
+#      | pwbmw                | BMW        | 15213 |
 
 
       @AIS  
      @DB-Response-validation
 Scenario Outline: Validating the data of cashIncentive table
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
+    When get the aisIncentive by the feedRunId, <make> and <accountId>
+    When choose a random vehicleGroup with the aisIncentiveId of the aisIncentive
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
     When adding to the api path the vin and <zip> of the vehicle
@@ -150,9 +154,10 @@ Scenario Outline: Validating the data of cashIncentive table
 
       @AIS  
      @DB-Response-validation
-Scenario Outline: Validating the data of vehicleCode table
+Scenario Outline: Validating the data of vehicleCode table 2
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
+    When get the aisIncentive by the feedRunId, <make> and <accountId>
+    When choose a random vehicleGroup with the aisIncentiveId of the aisIncentive
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
     When adding to the api path the vin and <zip> of the vehicle
@@ -175,9 +180,10 @@ Scenario Outline: Validating the data of vehicleCode table
 
      @AIS  
      @DB-Response-validation
- Scenario Outline: Validating the data of vehicleGroupMatchDetail table
+ Scenario Outline: Validating the data of vehicleGroupMatchDetail table 2
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
+    When get the aisIncentive by the feedRunId, <make> and <accountId>
+    When choose a random vehicleGroup with the aisIncentiveId of the aisIncentive
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
     When adding to the api path the vin and <zip> of the vehicle
@@ -202,9 +208,10 @@ Scenario Outline: Validating the data of vehicleCode table
 
      @AIS  
      @DB-Response-validation
- Scenario Outline: Validating the data of cashIncentive table
+ Scenario Outline: Validating the data of cashIncentive table 2
     Given the server endpoint is https://incentives.homenetiol.com/US/FindVehicleGroupsByVehicleAndPostalcode/
-    When Get a random aisIncentive with the latest feedRunId <accountId> and <make>
+    When get the aisIncentive by the feedRunId, <make> and <accountId>
+    When choose a random vehicleGroup with the aisIncentiveId of the aisIncentive
     When adding following headers
       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
     When adding to the api path the vin and <zip> of the vehicle

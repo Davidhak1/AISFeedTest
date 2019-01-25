@@ -29,9 +29,7 @@ public class base {
 
     private static AISIncentive aisIncentive;
     private static VehicleGroup vehicleGroup;
-    private static List<AISIncentive> aisIncentives;
-
-
+    private static List<VehicleGroup> vehicleGroups;
 
 
     public void initBase() {
@@ -106,12 +104,12 @@ public class base {
         base.vehicleGroup = vehicleGroup;
     }
 
-    public static List<AISIncentive> getAisIncentives() {
-        return aisIncentives;
+    public static List<VehicleGroup> getVehicleGroups() {
+        return vehicleGroups;
     }
 
-    public static void setAisIncentives(List<AISIncentive> aisIncentives) {
-        base.aisIncentives = aisIncentives;
+    public static void setVehicleGroups(List<VehicleGroup> vehicleGroups) {
+        base.vehicleGroups = vehicleGroups;
     }
 
 

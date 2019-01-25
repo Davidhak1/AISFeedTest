@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 public class VehicleGroup {
     private long id;
     private String vin;
-    private String make;
     private String aisIncentiveId;
     private  String aisVehicleGroupId;
     private String vehicleGroupName;
@@ -19,12 +18,11 @@ public class VehicleGroup {
     private String exclusionHints;
     private LocalDateTime created;
 
-    public VehicleGroup(long id, String vin, String make, String aisIncentiveId, String aisVehicleGroupId,
+    public VehicleGroup(long id, String vin, String aisIncentiveId, String aisVehicleGroupId,
                         String vehicleGroupName, long vehicleGroupId, int modelYear, int marketingYear,
                         long regionId, String hash, String vehicleHints, String exclusionHints, LocalDateTime created) {
         this.id = id;
         this.vin = vin;
-        this.make = make;
         this.aisIncentiveId = aisIncentiveId;
         this.aisVehicleGroupId = aisVehicleGroupId;
         this.vehicleGroupName = vehicleGroupName;
@@ -38,13 +36,12 @@ public class VehicleGroup {
         this.created = created;
     }
 
-    public VehicleGroup(long id, String vin, String make, String aisIncentiveId, String aisVehicleGroupId, String vehicleGroupName,
+    public VehicleGroup(long id, String vin, String aisIncentiveId, String aisVehicleGroupId, String vehicleGroupName,
                         long vehicleGroupId, int modelYear, int marketingYear, long regionId, String hash,
                         String vehicleHints, String exclusionHints, Timestamp created) {
 
         this.id = id;
         this.vin = vin;
-        this.make = make;
         this.aisIncentiveId = aisIncentiveId;
         this.aisVehicleGroupId = aisVehicleGroupId;
         this.vehicleGroupName = vehicleGroupName;
@@ -164,13 +161,7 @@ public class VehicleGroup {
         this.vin = vin;
     }
 
-    public String getMake() {
-        return make;
-    }
 
-    public void setMake(String make) {
-        this.make = make;
-    }
 
     @Override
     public String toString() {
