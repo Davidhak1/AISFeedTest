@@ -31,8 +31,8 @@ public class TestRunner extends AbstractTestNGCucumberTests  {
 		Reporter.setSystemInfo("Test User", "Davit Hakobyan");
 		Reporter.setSystemInfo("Operating System Type", System.getProperty("os.name"));
         Reporter.setSystemInfo("OS version", System.getProperty("os.version"));
-        Reporter.setSystemInfo("Web App Name", "Image Ingester");
-		Reporter.setSystemInfo("Build version", "v 2.3");
+        Reporter.setSystemInfo("Web App Name", "AIS Incentives Feed");
+		Reporter.setSystemInfo("Build version", "v 1.3");
 		Reporter.setTestRunnerOutput("Cucumber reporting using Extent Config");
 	}
 }
