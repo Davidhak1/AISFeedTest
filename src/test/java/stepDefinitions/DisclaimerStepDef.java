@@ -23,8 +23,6 @@ public class DisclaimerStepDef extends base {
     private static List<Integer> dbProgramIds;
 
     private static List<Integer> jsonPrograms;
-    private static List<Integer> dbPrograms;
-
 
     @Given("^Disclaimer Initialization$")
     public void operInitialization() {
@@ -63,26 +61,21 @@ public class DisclaimerStepDef extends base {
 
     }
 
-    @Then("^all the programs that are in json response should be saved in ais_insentives db$")
-    public void weShouldHaveAProgramDescriptionForEveryCashProgram() {
-        int programCount = q_a.getTheNumberOfcashIncentivesThatHaveProgram(getFeedRunId());
-        int programDescrCount = q_a.getTheNumberOfcashIncentivesThatHaveProgramAndHaveProgramDescription(getFeedRunId());
+    @Then("^the number of programs in json response should be less or equal to the number of programLocals in db$")
+    public void theNumberOfProgramsInJsonResponseShouldBeLessOrEqualToTheNumberOfProgramLocalsInDb() {
+        List<Integer> allJsonPrograms = com.jayway.jsonpath.JsonPath.read(responseHolder.getResponseBody(), "response.*.programID");
+        int jsonProgramCount = allJsonPrograms.size();
+        int dbProgramCount = q_d.getAllProgramLocalProgramIDs().size();
 
-        System.out.printf("%n Count of cashPrograms having programId [%d] = count of ProgramDescriptions [%d]%n", programCount, programDescrCount);
-
-        Assert.assertTrue(programCount != 0, "There are probably no aisIncentives with feedRunId = " + getFeedRunId() +
-                ". Please rerun the feed");
-
-        Assert.assertEquals(programCount, programDescrCount, String.format("The number of cashIncentives in db that have a program" +
-                "is not equal to the number of cashIncentive that have program and programDescription. programCount:%d, " +
-                "programDescriptionCount:%d", programCount, programDescrCount));
-
+        Assert.assertTrue(jsonProgramCount <= dbProgramCount,String.format(" The amount of programs in json response" +
+                "is greater than the amount in db. Json:%d, DB:%d", jsonProgramCount,dbProgramCount ));
+        System.out.printf("%njsonPrograms count: %d,%ndbProgramsCount: %d%n", jsonProgramCount,dbProgramCount);
     }
 
     @Then("^we should have a programLocalDescription for every programLocal in db$")
     public void weShouldHaveAProgramLocalDDescriptionForEveryProgramLocalInDb() {
         Set<Integer> programLocalIDs = q_d.GetAllProgramLocalIDs();
-        Set<Integer> programLocalDescriptionIDs = q_d.getAllProgramLocalDescriptionIDs();
+        Set<Integer> programLocalDescriptionIDs = q_d.getAllProgramLocalDescriptionProgramLocalIDs();
 
         System.out.printf("%n Count of nprogramLocalIDs [%d] = programLocalDescriptionIDs [%d]%n", programLocalIDs.size(), programLocalDescriptionIDs.size());
 
@@ -118,8 +111,8 @@ public class DisclaimerStepDef extends base {
 
 
 
-//        jsonPrograms.add(153029);
-//        jsonPrograms.add(34310);
+        jsonPrograms.add(377500);
+        jsonPrograms.add(455819);
 //
         for (int i = 0; i < size; i++) {
             jsonPrograms.add(allJsonProgramIDs.get(new Random().nextInt(allJsonProgramIDs.size())));
