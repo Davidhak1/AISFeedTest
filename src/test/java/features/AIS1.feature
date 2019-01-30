@@ -7,7 +7,7 @@ Feature: AISFeedDownload
 
     @AIS  
      @DB-Response-validation
-  Scenario Outline: Getting the # of all eligible vehicles from Nexus 'vehicle' tb and the # of those vehicles having vehicle groups in 'aisIncentive' tb
+  Scenario Outline: Validating that the feed fetches all eligible vehicles from Nexus vehicle table
     When Get the number of ais CA eligible vehicles for <accountId> and <make>
     When Get the number of vehicles having vehicleGroup in DB with the latest feedRunId <accountId> and <make>
     Examples:
@@ -78,7 +78,7 @@ Scenario Outline: Validating the data of vehicleCode table
     When perform the get request
     Then the response code should be 200
     Then the amount of vehicleGroups should be the same in the response and db
-    Then get number 0 vehicleGroup of the response
+    Then get number 1 vehicleGroup of the response
     Then the amount of vehicleCodes with those vehicleGroupId should be the same in the response and db
     Then the acodes should be the same in the response and db
     Then the modelCodes should be the same in the response and db
