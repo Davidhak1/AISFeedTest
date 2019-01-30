@@ -13,17 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 public class OperationsStepDef extends base {
-//    ResponseHolder responseHolder;
-//    Response response;
-//    RequestSpecification request;
-//    Map<String, Object> responseMap;
-//    ArrayList<HashMap<String, String>> responseMapArray;
-//    Map<String, String> body;
-//    List<String> bodyLikeArray;
-//    private String url;
 
-    //    private String feedRunId;
-//    private int eligibleCo"eligibleCo?vesCount/?/;
     private static int numberOfVehicleGroups;
     private static int numberOfVehicleCodes;
     private static int numberOfVehicleMatchDetails;
@@ -630,5 +620,6 @@ public class OperationsStepDef extends base {
         String responseVin = responseHolder.getResponseJsonPath().get("response[0].vin");
 //        Assert.assertEquals(responseVin,getAisIncentive().getVin(), "The vin of AIS incentive is not equal to the vin in the response");
     }
+
 
 }

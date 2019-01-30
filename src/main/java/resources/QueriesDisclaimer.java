@@ -61,11 +61,11 @@ public class QueriesDisclaimer {
         return null;
     }
 
-    public Set<Integer> getAllProgramLocalDescriptionIDs() {
+    public Set<Integer> getAllProgramLocalDescriptionProgramLocalIDs() {
         Statement stmt = mysqlCon.getStatement();
         Set<Integer> IDs = new HashSet<Integer>();
         try {
-            ResultSet rs = stmt.executeQuery(String.format("select id from programLocalDescription"));
+            ResultSet rs = stmt.executeQuery(String.format("select programLocalId from programLocalDescription"));
 
             while (rs.next()) {
                 IDs.add(rs.getInt(1));
