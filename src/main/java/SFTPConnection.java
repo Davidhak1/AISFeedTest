@@ -4,21 +4,29 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import resources.Utils;
+
+import java.util.Properties;
+
 /**
  *
  * @author javagists.com
  *
  */
 public class SFTPConnection {
+         public Properties prop;
 
-    public static void main(String[] args) throws Exception {
+    public void SFTPCon() throws Exception {
+
+        prop = Utils.initProp("src/main/java/resources/data.properties")   ;
+
 
         JSch jsch = new JSch();
         Session session = null;
         try {
-            session = jsch.getSession("dhakobyan", "vtqainv-incentivesfeedsagg01.dealer.ddc");
+            session = jsch.getSession(prop.getProperty("ftpUser"), prop.getProperty("ftpUrl"));
             session.setConfig("StrictHostKeyChecking", "no");
-            session.setPassword("Iamhere1!");
+            session.setPassword(prop.getProperty("ftpPassword"));
             session.connect();
 
             Channel channel = session.openChannel("sftp");
@@ -34,6 +42,11 @@ public class SFTPConnection {
             e.printStackTrace();
         }
 
+    }
+
+    public static void main(String[] args) throws Exception{
+          SFTPConnection test = new SFTPConnection();
+          test.SFTPCon();
     }
 
 }

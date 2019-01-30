@@ -4,6 +4,7 @@ package resources;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.Clob;
@@ -46,6 +47,18 @@ public class Utils {
             // handle this exception
         }
         return sb.toString();
+    }
+
+    public static Properties initProp(String path){
+        Properties prop = new Properties();
+
+        try {
+            FileInputStream fis = new FileInputStream(path);
+            prop.load(fis);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return prop;
     }
 
 //    public static void main(String[] args) {
