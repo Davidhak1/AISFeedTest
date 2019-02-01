@@ -49,4 +49,8 @@ public class SFTPConnection {
           test.SFTPCon();
     }
 
+    public void XMLDataValidation(){
+        
+    }
+
 }

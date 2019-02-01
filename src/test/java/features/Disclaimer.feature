@@ -1,5 +1,8 @@
 Feature: AISFeedDownload
 
+
+  #---------RECOMMENDED------To run the ais feed batch before running the test------------------------------------------
+
   Background:
     Given Initialization
     Given Operations Initialization
@@ -26,8 +29,9 @@ Feature: AISFeedDownload
     When perform the get request
     When fetch all the programIds from the response
     Then There should be no duplicate programIds in the json response
+    Then we should have all the programs in our db
     Then the number of programs in json response should be less or equal to the number of programLocals in db
-    Then we should have a programLocal for every program in db
+#    Then we should have a programLocal for every program in db
     Then we should have a programLocalDescription for every programLocal in db
 
 
@@ -40,7 +44,7 @@ Feature: AISFeedDownload
       | Content-Type | application/json                     |
     When perform the get request
     Then the response code should be 200
-    When extract 40 random programs from json response
+    When extract 30 random programs from json response
     Then the according programs should exist in ais_incentives db programDescription table
     Then the compatibleProgramsString field should contain all programs that are in json response
     Then the consumer field should be the same in the response and db

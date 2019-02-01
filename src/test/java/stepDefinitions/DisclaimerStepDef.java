@@ -59,6 +59,7 @@ public class DisclaimerStepDef extends base {
         Assert.assertTrue(jsonMinusDB.isEmpty(), String.format("'programLocal' table doesn't include %d programIDs from the JSON response " +
                 "List of programIDs that was not located in db --->>>", jsonMinusDB.size()) + jsonMinusDB);
 
+        System.out.println("\nChecking that all programs from json response exist in our db: passed!" );
     }
 
     @Then("^the number of programs in json response should be less or equal to the number of programLocals in db$")
@@ -71,6 +72,7 @@ public class DisclaimerStepDef extends base {
                 "is greater than the amount in db. Json:%d, DB:%d", jsonProgramCount,dbProgramCount ));
         System.out.printf("%njsonPrograms count: %d,%ndbProgramsCount: %d%n", jsonProgramCount,dbProgramCount);
     }
+
 
     @Then("^we should have a programLocalDescription for every programLocal in db$")
     public void weShouldHaveAProgramLocalDDescriptionForEveryProgramLocalInDb() {
@@ -93,7 +95,7 @@ public class DisclaimerStepDef extends base {
         Set<Integer> programLocalProgramIDs = q_d.getAllProgramLocalProgramIDs();
 
         System.out.printf("%n Count of 'program' table programIDs [%d] = 'programLocal' table programIds " +
-                "[%d]%n", programIDs.size(), programIDs.size());
+                "[%d]%n", programIDs.size(), programLocalProgramIDs.size());
 
         Collection<Integer> programMinusProgramLocal = CollectionUtils.subtract(programIDs, programLocalProgramIDs);
 
@@ -111,8 +113,7 @@ public class DisclaimerStepDef extends base {
 
 
 
-        jsonPrograms.add(377500);
-        jsonPrograms.add(455819);
+
 //
         for (int i = 0; i < size; i++) {
             jsonPrograms.add(allJsonProgramIDs.get(new Random().nextInt(allJsonProgramIDs.size())));
@@ -283,6 +284,7 @@ public class DisclaimerStepDef extends base {
             System.out.println("\n" + jsonTaxStatus + " = " + dbTaxStatus);
         }
     }
+
 
 }
 

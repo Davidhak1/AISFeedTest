@@ -80,7 +80,7 @@ public class QueriesDisclaimer {
         finally{
             mysqlCon.endCon();
         }
-        System.out.println("No programLocalDescriptionss found");
+        System.out.println("\nNo programLocals found");
         return null;
     }
 
@@ -103,7 +103,7 @@ public class QueriesDisclaimer {
         finally{
             mysqlCon.endCon();
         }
-        System.out.println("No programLocalDescriptionss found");
+        System.out.println("\nNo programs found");
         return null;
     }
 
@@ -126,7 +126,7 @@ public class QueriesDisclaimer {
         finally{
             mysqlCon.endCon();
         }
-        System.out.println("No programLocalDescriptionss found");
+        System.out.println(" \nNo programLocals found");
         return null;
     }
 
