@@ -75,15 +75,13 @@ public class RestStepDef extends base {
         Assert.assertEquals(200, response.getStatusCode());
     }
 
-    @When("^adding api path for get request (.+)$")
-    public void adding_api_path_for_the_request(String apiUrl) throws Throwable {
+    @When("^adding to the api path (.+)$")
+    public void adding_to_the_api_path(String apiUrl) throws Throwable {
         this.url += apiUrl;
     }
 
-    @When("^adding api path and body for post requst (.+) with below details")
-    public void addingApiPathForPostRequstApiLocationLocationDetails(String api_url, DataTable dataTable) throws Throwable {
-
-        this.url += api_url;
+    @When("^adding api body for post requst with below details")
+    public void addingApiBodyForPostRequstApiLocationLocationDetails( DataTable dataTable) throws Throwable {
 
         this.body = new LinkedHashMap<String, String>();
         for (DataTableRow row : dataTable.getGherkinRows()) {
