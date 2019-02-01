@@ -17,6 +17,7 @@ Feature: Endpoint for saving mapping of vehicle and incentives in IMDB '
     When perform the post request
     Then we should have a row with the uuid and feedRunId we sent
     Then we should have the incentives and the aisVehicleFeedId in aisVehicleThirdPartyIncenitves
+
     Then the response code should be 200
 
     Examples:
