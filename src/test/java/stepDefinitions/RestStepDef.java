@@ -30,6 +30,7 @@ import org.testng.Assert;
 
 import resources.ResponseHolder;
 import resources.base;
+import resources.compatibleBase;
 
 import java.io.IOException;
 import java.util.*;
@@ -39,20 +40,21 @@ import static java.lang.String.join;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 
-public class RestStepDef extends base {
+public class RestStepDef extends compatibleBase {
 
     Map<String, Object> responseMap;
     ArrayList<HashMap<String, String>> responseMapArray;
     Map<String, String> body;
     List<String> bodyLikeArray;
-
+//    public static Set<Integer> distinctRegions;
+//    public static Map<Integer,Integer> regionZipMap;
 
 
     private String url;
 
     @Given("^Initialization$")
     public void initialization() {
-        System.out.println("INSIDE INIT---------------");
+        System.out.println("\nINSIDE INIT---------------");
         initBase();
         request = RestAssured.with();
 
@@ -124,8 +126,13 @@ public class RestStepDef extends base {
 
     @And("^perform the post request$")
     public void andPerformThePostRequest() throws Throwable {
-        response = request.contentType(ContentType.JSON).body(this.body).when().post(this.url);
+        if(this.body!=null) {
+            response = request.contentType(ContentType.JSON).body(this.body).when().post(this.url);
+        }
+        else
+            response = request.contentType(ContentType.JSON).when().post(this.url);
         responseHolder.setResponse(response);
+
     }
 
     @And("^perform the post request sending an array$")
@@ -257,12 +264,62 @@ public class RestStepDef extends base {
 
     }
 
-    @When("^adding to the api path the vin of the vehicle and the latestFeedRunId$")
-    public void addingToTheApiPathTheVinOfTheVehicleAndTheLatestFeedRunId() {
-//        this.url += "/"+getAisIncentive().getVin();
-//        this.url += "/"+getFeedRunId();
+
+    @Then("^print the number of postalCodes per regionId (.+)$")
+    public void printTheNumberOfPostalCodesPerRegionId(String make) {
+        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+
+        if (distinctRegions==null) {
+            distinctRegions = new HashSet<Integer>();
+            regionZipMap = new HashMap<Integer, Integer>();
+        }
+        System.out.println(make);
+        int regionIdsSize = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regioID.size()"));
+        System.out.println(regionIdsSize);
+        for (int i = 0; i < regionIdsSize; i++) {
+            int regionId = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regionID[%d]", i));
+            int zipCount = responseJsonPath.get(String.format("response.regionPostalcodeGroups.postalcodes[%d].size", i));
+
+            distinctRegions.add(regionId);
+            regionZipMap.put(regionId, zipCount);
+
+            System.out.println(regionId + " : " + zipCount);
+        }
+        System.out.println("%nDistinct regionIds = " + distinctRegions.size());
+
+//        for (Integer regionId : distinctRegions) {
+//            System.out.println(regionId);
+//        }
+
+        int totalPairs = 0;
+        int i=1;
+        Iterator entries = regionZipMap.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            int key = (int) entry.getKey();
+            int value = (int) entry.getValue();
+            System.out.println(i++ + ")RegionId : " + key + " = " + value + " postal code");
+            totalPairs+=value;
+        }
+        System.out.println("#TOTAL PAIRS = " + totalPairs);
+
     }
 
+//    @Then("^save in a set all the postalCodes$")
+//    public void saveInASetAllThePostalCodes() {
+//        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+//        Set<Integer> totalRegions = new HashSet<Integer>();
+//
+//        int regionIds = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regioID.size()"));
+//        System.out.println("\n"+regionIds);
+//        for(int i = 0; i<regionIds; i++) {
+//            int regionId = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regionID[%d]", i));
+//
+//            List<String> postalCodes = responseJsonPath.get(String.format("response.regionPostalcodeGroups.postalcodes[%d]", i));
+//            System.out.println(regionId + " : " + postalCodes.size());
+//        }
+//
+//    }
 }
 
 

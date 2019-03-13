@@ -8,8 +8,7 @@ public class QueriesNexusVehicle {
 
     private MysqlConNexus mysqlCon= new MysqlConNexus();
 
-    public int getNumberOfVehiclesWithAccountIdOemAndNewAndNotRemoved(String parentId, String make)
-    {
+    public int getNumberOfVehiclesWithAccountIdOemAndNewAndNotRemoved(String parentId, String make) {
         Statement stmt = mysqlCon.getStatement();
         int count = 0;
 
@@ -32,8 +31,6 @@ public class QueriesNexusVehicle {
         }
 
     }
-
-
 
 
 }

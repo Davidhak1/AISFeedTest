@@ -61,8 +61,8 @@ public class Utils {
         return prop;
     }
 
-//    public static void main(String[] args) {
-//
+    public static void main(String[] args) {
+
 //            List<Integer> a = new ArrayList<>();
 //            List<Integer> b = new ArrayList<>();
 //
@@ -83,5 +83,23 @@ public class Utils {
 //            System.out.println(aMinusB);
 //
 //        System.out.println(aMinusB.isEmpty());
-//    }
+
+        getUniqueIdYear("FORD_2019_Transit Connect_P-18528_D-1_1633763509_No-Tier");
+        getUniqueIdModel("FORD_2019_Transit Connect_P-18528_D-1_1633763509_No-Tier");
+    }
+
+    public static int getUniqueIdYear(String id){
+        int year;
+        id = id.substring(id.indexOf('_')+1);
+        year = Integer.parseInt(id.substring(0,id.indexOf('_')));
+        return year;
+    }
+
+    public static String getUniqueIdModel(String id){
+        String model;
+        id = id.substring(id.indexOf('_')+1);
+        id = id.substring(id.indexOf('_')+1);
+        model = id.substring(0,id.indexOf('_'));
+        return model;
+    }
 }

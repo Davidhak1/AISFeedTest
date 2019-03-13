@@ -22,7 +22,7 @@ Feature: AISFeedDownload
   @AIS
   @AIS-DISCLAIMER
   Scenario: Validating that all programs from response exist in db 1
-    Given the server endpoint is https://incentives.homenetiol.com/GetPrograms?format=json
+    Given the server endpoint is https://incentives.homenetiol.com/v2.6/CA/GetPrograms
     When adding following headers
       | AIS-ApiKey   | 85C88437-7536-48FE-8914-4383CED65BA2 |
       | Content-Type | application/json                     |
@@ -31,14 +31,14 @@ Feature: AISFeedDownload
     Then There should be no duplicate programIds in the json response
     Then we should have all the programs in our db
     Then the number of programs in json response should be less or equal to the number of programLocals in db
-#    Then we should have a programLocal for every program in db
+    Then we should have a programLocal for every program in db
     Then we should have a programLocalDescription for every programLocal in db
 
 
   @AIS
   @AIS-DISCLAIMER
   Scenario: Validating if the data in db matches the data of the response (IMPORTANT TEST)
-    Given the server endpoint is https://incentives.homenetiol.com/GetPrograms?format=json
+    Given the server endpoint is https://incentives.homenetiol.com/v2.6/CA/GetPrograms
     When adding following headers
       | AIS-ApiKey   | 85C88437-7536-48FE-8914-4383CED65BA2 |
       | Content-Type | application/json                     |
@@ -52,4 +52,3 @@ Feature: AISFeedDownload
     Then the short-title field should be the same in the response and db
     Then the title field should be the same in the response and db
     Then the taxStatus field should be the same in the response and db
-

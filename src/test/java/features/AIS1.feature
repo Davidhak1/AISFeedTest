@@ -213,7 +213,7 @@ Scenario Outline: Validating the data of vehicleCode table 2
     When get the aisIncentive by the feedRunId, <make> and <accountId>
     When choose a random vehicleGroup with the aisIncentiveId of the aisIncentive
     When adding following headers
-      | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
+       | AIS-ApiKey | 85C88437-7536-48FE-8914-4383CED65BA2 |
     When adding to the api path the vin and <zip> of the vehicle
     When perform the get request
     Then the response code should be 200

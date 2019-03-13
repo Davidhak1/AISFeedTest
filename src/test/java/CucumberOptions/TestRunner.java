@@ -17,7 +17,7 @@ import java.io.File;
 		glue="stepDefinitions",
 //        tags = {"@AIS"},
         tags = {"@AIS-DISCLAIMER"},
-//		  tags = {"@DB-Response-validation"},
+//		  tags = {"@DB-Response-validation"
 //        tags = {"@Incentives-Services-API"},
         plugin={"com.cucumber.listener.ExtentCucumberFormatter:target/html/report.html"},
         strict = false,

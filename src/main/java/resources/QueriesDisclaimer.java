@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class QueriesDisclaimer {
 
-    private MysqlConAIS mysqlCon= new MysqlConAIS();
+    private MysqlConAIS mysqlCon = new MysqlConAIS();
 
 
     public List<Integer> GetAllProgramLocalProgramIDs() {
@@ -25,13 +25,12 @@ public class QueriesDisclaimer {
                 programIDs.add(rs.getInt(1));
             }
 
-            if(programIDs.size()>0)
+            if (programIDs.size() > 0)
                 return programIDs;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("------------------EXCEPTION IN THE QUERIES CLASS------------------");
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             mysqlCon.endCon();
         }
         System.out.println("No programLocals found");
@@ -48,13 +47,12 @@ public class QueriesDisclaimer {
                 IDs.add(rs.getInt(1));
             }
 
-            if(IDs.size()>0)
+            if (IDs.size() > 0)
                 return IDs;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("------------------EXCEPTION IN THE QUERIES CLASS------------------");
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             mysqlCon.endCon();
         }
         System.out.println("No programLocals found");
@@ -71,13 +69,12 @@ public class QueriesDisclaimer {
                 IDs.add(rs.getInt(1));
             }
 
-            if(IDs.size()>0)
+            if (IDs.size() > 0)
                 return IDs;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("------------------EXCEPTION IN THE QUERIES CLASS------------------");
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             mysqlCon.endCon();
         }
         System.out.println("\nNo programLocals found");
@@ -94,13 +91,12 @@ public class QueriesDisclaimer {
                 IDs.add(rs.getInt(1));
             }
 
-            if(IDs.size()>0)
+            if (IDs.size() > 0)
                 return IDs;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("------------------EXCEPTION IN THE QUERIES CLASS------------------");
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             mysqlCon.endCon();
         }
         System.out.println("\nNo programs found");
@@ -117,20 +113,19 @@ public class QueriesDisclaimer {
                 IDs.add(rs.getInt(1));
             }
 
-            if(IDs.size()>0)
+            if (IDs.size() > 0)
                 return IDs;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("------------------EXCEPTION IN THE QUERIES CLASS------------------");
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             mysqlCon.endCon();
         }
         System.out.println(" \nNo programLocals found");
         return null;
     }
 
-    public ProgramLocal getProgramLocalByProgramID(int programID){
+    public ProgramLocal getProgramLocalByProgramID(int programID) {
         Statement stmt = mysqlCon.getStatement();
 
         try {
@@ -138,23 +133,21 @@ public class QueriesDisclaimer {
             ResultSet rs = stmt.executeQuery(String.format("select * from programLocal where programID = '%d';", programID));
 
             while (rs.next()) {
-                return new ProgramLocal(rs.getLong(1), rs.getLong(2),rs.getLong(3),
+                return new ProgramLocal(rs.getLong(1), rs.getLong(2), rs.getLong(3),
                         rs.getString(4));
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
             e.printStackTrace();
-        }
-
-        finally{
+        } finally {
             mysqlCon.endCon();
         }
-        System.out.println("No ProgramLocals found with 'programID' = "+programID);
+        System.out.println("No ProgramLocals found with 'programID' = " + programID);
         return null;
     }
 
-    public ProgramLocalDescription getProgramLocalDescriptionByProgramLocalID(long programLocalID){
+    public ProgramLocalDescription getProgramLocalDescriptionByProgramLocalID(long programLocalID) {
         Statement stmt = mysqlCon.getStatement();
 
         try {
@@ -162,20 +155,18 @@ public class QueriesDisclaimer {
             ResultSet rs = stmt.executeQuery(String.format("select * from programLocalDescription where programLocalId = '%d';", programLocalID));
 
             while (rs.next()) {
-                return new ProgramLocalDescription(rs.getLong(1), rs.getString(2),rs.getLong(3),
-                        rs.getString(4),rs.getClob(5),rs.getString(6),rs.getString(7),
+                return new ProgramLocalDescription(rs.getLong(1), rs.getString(2), rs.getLong(3),
+                        rs.getString(4), rs.getClob(5), rs.getString(6), rs.getString(7),
                         rs.getString(8), rs.getString(9));
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
             e.printStackTrace();
-        }
-
-        finally{
+        } finally {
             mysqlCon.endCon();
         }
-        System.out.println("No ProgramLocalDescriptions found with 'programLocalID' = "+programLocalID);
+        System.out.println("No ProgramLocalDescriptions found with 'programLocalID' = " + programLocalID);
         return null;
     }
 

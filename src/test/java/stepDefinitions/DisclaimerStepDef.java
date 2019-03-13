@@ -70,7 +70,7 @@ public class DisclaimerStepDef extends base {
 
         Assert.assertTrue(jsonProgramCount <= dbProgramCount,String.format(" The amount of programs in json response" +
                 "is greater than the amount in db. Json:%d, DB:%d", jsonProgramCount,dbProgramCount ));
-        System.out.printf("%njsonPrograms count: %d,%ndbProgramsCount: %d%n", jsonProgramCount,dbProgramCount);
+        System.out.printf("%njsonProgramIds count: %d,%ndbProgramIdsCount: %d%n", jsonProgramCount,dbProgramCount);
     }
 
 

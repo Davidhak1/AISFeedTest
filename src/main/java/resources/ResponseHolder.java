@@ -29,7 +29,6 @@ public class ResponseHolder {
         return responseBody;
     }
 
-
     public static Headers getResponseHeaders(){
         responseHeaders = response.getHeaders();
         return  responseHeaders;
@@ -55,8 +54,8 @@ public class ResponseHolder {
         }
         }
 
-
     public static JsonPath getResponseJsonPath() {
         return response.jsonPath();
     }
+
 }
