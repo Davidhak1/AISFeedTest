@@ -66,44 +66,6 @@ public class OperationsStepDef extends base {
 
     }
 
-    @When("^get the aisIncentive by the feedRunId, (.+) and (.+)$")
-    public void getTheAisIncentiveByTheFeedRunIdMakeAndAccountId(String make, String accountId) {
-        setAisIncentive(q_a.getAisIncentiveByFeedRunIdAccountIdAndMake(getFeedRunId(),accountId,make));
-
-    }
-
-    @When("^choose a random vehicleGroup with the aisIncentiveId of the aisIncentive$")
-    public void chooseARandomVinFromVehicleGroupWithTheAisIncentiveIdOfTheAisIncentive() {
-        setVehicleGroups(q_a.getVehicleGroupsByAISIncentiveId(getAisIncentive().getId()));
-
-        Assert.assertNotNull(getVehicleGroups(),String.format("There are %d vehicleGroups found with 'aisIncentiveId = %d (feeddRunId = %s,"
-                + "accountId = %s, make = %s'.%n", getVehicleGroups().size(), getAisIncentive().getId(), getFeedRunId(),
-                getAisIncentive().getAccountId(), getAisIncentive().getMake()));
-
-        System.out.printf("%d vehicleGroups found in the db matching the search 'aisIncentiveId = %d (feedRunId = %s, " +
-                "accountId = %s, make = %s'.%n", getVehicleGroups().size(), getAisIncentive().getId(), getFeedRunId(),
-                getAisIncentive().getAccountId(), getAisIncentive().getMake());
-        VehicleGroup random = null;
-            random = getVehicleGroups().get(new Random().nextInt(getVehicleGroups().size()));
-
-        setVehicleGroup(random);
-//        setVehicleGroup(q_a.getVehicleGroupByID(15011));                  Just for debugging purpose
-
-    }
-
-    @Then("^the amount of vehicleGroups should be the same in the response and db$")
-    public void theNumberOfVehicleGroupsShouldBeTheSameInTheResponseAndDb() {
-        int jsonLenght = responseHolder.lengthOfArray("response");
-        int dbLength = q_a.getNumberOfVehicleGroupsByAISInentiveIdAndVin(getAisIncentive().getId(), getVehicleGroup().getVin());
-
-        System.out.println(jsonLenght + " = " + dbLength);
-        Assert.assertEquals(dbLength, jsonLenght, String.format("The number of vehicleGroups for 'aisIncentiveId' = '%s' " +
-                "and vin = '%s' in db is not equal the number in json response. DB: %s, Json: %s",
-                getAisIncentive().getId(), getVehicleGroup().getVin(), dbLength, jsonLenght));
-
-        numberOfVehicleGroups = jsonLenght;
-    }
-
     @Then("^the amount of vehicleCodes with those vehicleGroupId should be the same in the response and db$")
     public void theAmountOfVehicleCodesWithThoseVehicleGroupIdShouldBeTheSameInTheResponseAndDb() {
         int jsonLenght = responseHolder.lengthOfArray(String.format("response[%d].vehicleCodes", number));
@@ -137,175 +99,176 @@ public class OperationsStepDef extends base {
         numberOfCashIncentives = jsonLenght;
     }
 
-    @Then("^the values of aisVehicleGroupIds should be the same in the response and db$")
-    public void theValuesOfAisVehicleGroupIdsShouldBeTheSameInTheResponseAndDb() {
 
-        VehicleGroup vg = getVehicleGroup();
-        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
-        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
-        String jsonAisVehicleGroupId = null;
-        for (int i = 0; i < numberOfVehicleGroups; i++) {
-            boolean flag = false;
-            for (VehicleGroup dbvg : dbVehicleGroups) {
-                System.out.println("\n" + i + ") db vehicleGroupId:" + dbvg.getAisVehicleGroupId());
-                jsonAisVehicleGroupId = responseJsonPath.get(String.format("response[%d].aisVehicleGroupID", i));
-                System.out.println(i + ") js vehicleGroupId:" + jsonAisVehicleGroupId);
-                if (dbvg.getAisVehicleGroupId().equalsIgnoreCase(jsonAisVehicleGroupId)) {
-                    dbVehicleGroups.remove(dbvg);
-                    flag = true;
-                    break;
-                }
-            }
-            Assert.assertTrue(flag, String.format("The db doesn't contain all the aisVehicleGroupIds (particularly:%s) in the json for aisIncentiveId = ", jsonAisVehicleGroupId, getAisIncentive().getId()));
-            System.out.println();
-        }
-    }
-
-    @Then("^the values of vehicleGroupIds should be the same in the response and db$")
-    public void theValuesOfVehicleGroupIdsShouldBeTheSameInTheResponseAndDb() {
-
-        VehicleGroup vg = getVehicleGroup();
-        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
-        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
-        int jsonVehicleGroupId = 0;
-        for (int i = 0; i < numberOfVehicleGroups; i++) {
-            boolean flag = false;
-            for (VehicleGroup dbvg : dbVehicleGroups) {
-                System.out.println("\n" + i + ") db vehicleGroupId:" + dbvg.getVehicleGroupId());
-                jsonVehicleGroupId = responseJsonPath.get(String.format("response[%d].vehicleGroupID", i));
-                System.out.println(i + ") js vehicleGroupId:" + jsonVehicleGroupId);
-                if (dbvg.getVehicleGroupId() == jsonVehicleGroupId) {
-                    dbVehicleGroups.remove(dbvg);
-                    flag = true;
-                    break;
-                }
-            }
-            Assert.assertTrue(flag, String.format("The db doesn't contain all the vehicleGroupIds (particularly:%d) in the json for aisIncentiveId = ", jsonVehicleGroupId, getAisIncentive().getId()));
-            System.out.println();
-        }
-    }
-
-    @Then("^the values of vehicleGroupNames should be the same in the response and db$")
-    public void theValuesOfvehicleGroupNamesShouldBeTheSameInTheResponseAndDb() {
-
-        VehicleGroup vg = getVehicleGroup();
-        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
-        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
-        String jsonVehicleGroupName = null;
-        for (int i = 0; i < numberOfVehicleGroups; i++) {
-            boolean flag = false;
-            for (VehicleGroup dbvg : dbVehicleGroups) {
-                System.out.println("\n" + i + ") db vehicleGroupName:" + dbvg.getVehicleGroupName());
-                jsonVehicleGroupName = responseJsonPath.get(String.format("response[%d].vehicleGroupName", i));
-                System.out.println(i + ") js vehicleGroupName:" + jsonVehicleGroupName);
-                if (dbvg.getVehicleGroupName().equalsIgnoreCase(jsonVehicleGroupName)) {
-                    dbVehicleGroups.remove(dbvg);
-                    flag = true;
-                    break;
-                }
-            }
-            Assert.assertTrue(flag, String.format("The db doesn't contain all the vehicleGroupNames (particularly:%s) in the json for aisIncentiveId = ", jsonVehicleGroupName, getAisIncentive().getId()));
-            System.out.println();
-
-        }
-    }
-
-    @Then("^the values of modelYear should be the same in the response and db$")
-    public void theValuesOfModelYearsShouldBeTheSameInTheResponseAndDb() {
-
-        VehicleGroup vg = getVehicleGroup();
-        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
-        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
-        int jsonModelYear = 0;
-        for (int i = 0; i < numberOfVehicleGroups; i++) {
-            boolean flag = false;
-            for (VehicleGroup dbvg : dbVehicleGroups) {
-                System.out.println("\n" + i + ") db modelYear:" + dbvg.getModelYear());
-                jsonModelYear = responseJsonPath.get(String.format("response[%d].modelYear", i));
-                System.out.println(i + ") js modelYear:" + jsonModelYear);
-                if (dbvg.getModelYear() == jsonModelYear) {
-                    dbVehicleGroups.remove(dbvg);
-                    flag = true;
-                    break;
-                }
-            }
-            Assert.assertTrue(flag, String.format("The db doesn't contain all the modelYears (particularly:%d) in the json for aisIncentiveId = ", jsonModelYear, getAisIncentive().getId()));
-            System.out.println();
-        }
-    }
-
-    @Then("^the values of marketingYear should be the same in the response and db$")
-    public void theValuesOfMarketingYearsShouldBeTheSameInTheResponseAndDb() {
-
-        VehicleGroup vg = getVehicleGroup();
-        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
-        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
-        int jsonMarketingYear = 0;
-        for (int i = 0; i < numberOfVehicleGroups; i++) {
-            boolean flag = false;
-            for (VehicleGroup dbvg : dbVehicleGroups) {
-                System.out.println("\n" + i + ") db marketingYear:" + dbvg.getMarketingYear());
-                jsonMarketingYear = Integer.parseInt(responseJsonPath.get(String.format("response[%d].marketingYear", i)).toString());
-                System.out.println(i + ") js marketingYear:" + jsonMarketingYear);
-                if (dbvg.getMarketingYear() == jsonMarketingYear) {
-                    dbVehicleGroups.remove(dbvg);
-                    flag = true;
-                    break;
-                }
-            }
-            Assert.assertTrue(flag, String.format("The db doesn't contain all the marketingYears (particularly:%d) in the json for aisIncentiveId = ", jsonMarketingYear, getAisIncentive().getId()));
-            System.out.println();
-        }
-    }
-
-    @Then("^the values of regionID should be the same in the response and db$")
-    public void theValuesOfRegionIDShouldBeTheSameInTheResponseAndDb() {
-
-        VehicleGroup vg = getVehicleGroup();
-        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
-        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
-        int jsonRegionID = 0;
-        for (int i = 0; i < numberOfVehicleGroups; i++) {
-            boolean flag = false;
-            for (VehicleGroup dbvg : dbVehicleGroups) {
-                System.out.println("\n" + i + ") db regionID:" + dbvg.getRegionId());
-                jsonRegionID = responseJsonPath.get(String.format("response[%d].regionID", i));
-                System.out.println(i + ") js regionID:" + jsonRegionID);
-                if (dbvg.getRegionId() == jsonRegionID) {
-                    dbVehicleGroups.remove(dbvg);
-                    flag = true;
-                    break;
-                }
-            }
-            Assert.assertTrue(flag, String.format("The db doesn't contain all the regionIDs (particularly:%d) in the json for aisIncentiveId = ", jsonRegionID, getAisIncentive().getId()));
-            System.out.println();
-        }
-    }
-
-    @Then("^the values of hashcodes should be the same in the response and db$")
-    public void theValuesOfHashcodesShouldBeTheSameInTheResponseAndDb() {
-
-        VehicleGroup vg = getVehicleGroup();
-        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
-        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
-        String jsonHashcode = null;
-        for (int i = 0; i < numberOfVehicleGroups; i++) {
-            boolean flag = false;
-            for (VehicleGroup dbvg : dbVehicleGroups) {
-                System.out.println("\n" + i + ") db hashcode:" + dbvg.getHash());
-                jsonHashcode = responseJsonPath.get(String.format("response[%d].hashcode", i));
-                System.out.println(i + ") js hashcode:" + jsonHashcode);
-                if (dbvg.getHash().equalsIgnoreCase(jsonHashcode)) {
-                    dbVehicleGroups.remove(dbvg);
-                    flag = true;
-                    break;
-                }
-            }
-            Assert.assertTrue(flag, String.format("The db doesn't contain all the hashcodes (particularly:%s) in the json for aisIncentiveId = %s", jsonHashcode, getAisIncentive().getId()));
-            System.out.println();
-
-        }
-    }
+//    @Then("^the values of aisVehicleGroupIds should be the same in the response and db$")
+//    public void theValuesOfAisVehicleGroupIdsShouldBeTheSameInTheResponseAndDb() {
+//
+//        VehicleGroup vg = getVehicleGroup();
+//        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
+//        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+//        String jsonAisVehicleGroupId = null;
+//        for (int i = 0; i < numberOfVehicleGroups; i++) {
+//            boolean flag = false;
+//            for (VehicleGroup dbvg : dbVehicleGroups) {
+//                System.out.println("\n" + i + ") db vehicleGroupId:" + dbvg.getAisVehicleGroupId());
+//                jsonAisVehicleGroupId = responseJsonPath.get(String.format("response[%d].aisVehicleGroupID", i));
+//                System.out.println(i + ") js vehicleGroupId:" + jsonAisVehicleGroupId);
+//                if (dbvg.getAisVehicleGroupId().equalsIgnoreCase(jsonAisVehicleGroupId)) {
+//                    dbVehicleGroups.remove(dbvg);
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            Assert.assertTrue(flag, String.format("The db doesn't contain all the aisVehicleGroupIds (particularly:%s) in the json for aisIncentiveId = ", jsonAisVehicleGroupId, getAisIncentive().getId()));
+//            System.out.println();
+//        }
+//    }
+//
+//    @Then("^the values of vehicleGroupIds should be the same in the response and db$")
+//    public void theValuesOfVehicleGroupIdsShouldBeTheSameInTheResponseAndDb() {
+//
+//        VehicleGroup vg = getVehicleGroup();
+//        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
+//        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+//        int jsonVehicleGroupId = 0;
+//        for (int i = 0; i < numberOfVehicleGroups; i++) {
+//            boolean flag = false;
+//            for (VehicleGroup dbvg : dbVehicleGroups) {
+//                System.out.println("\n" + i + ") db vehicleGroupId:" + dbvg.getVehicleGroupId());
+//                jsonVehicleGroupId = responseJsonPath.get(String.format("response[%d].vehicleGroupID", i));
+//                System.out.println(i + ") js vehicleGroupId:" + jsonVehicleGroupId);
+//                if (dbvg.getVehicleGroupId() == jsonVehicleGroupId) {
+//                    dbVehicleGroups.remove(dbvg);
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            Assert.assertTrue(flag, String.format("The db doesn't contain all the vehicleGroupIds (particularly:%d) in the json for aisIncentiveId = ", jsonVehicleGroupId, getAisIncentive().getId()));
+//            System.out.println();
+//        }
+//    }
+//
+//    @Then("^the values of vehicleGroupNames should be the same in the response and db$")
+//    public void theValuesOfvehicleGroupNamesShouldBeTheSameInTheResponseAndDb() {
+//
+//        VehicleGroup vg = getVehicleGroup();
+//        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
+//        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+//        String jsonVehicleGroupName = null;
+//        for (int i = 0; i < numberOfVehicleGroups; i++) {
+//            boolean flag = false;
+//            for (VehicleGroup dbvg : dbVehicleGroups) {
+//                System.out.println("\n" + i + ") db vehicleGroupName:" + dbvg.getVehicleGroupName());
+//                jsonVehicleGroupName = responseJsonPath.get(String.format("response[%d].vehicleGroupName", i));
+//                System.out.println(i + ") js vehicleGroupName:" + jsonVehicleGroupName);
+//                if (dbvg.getVehicleGroupName().equalsIgnoreCase(jsonVehicleGroupName)) {
+//                    dbVehicleGroups.remove(dbvg);
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            Assert.assertTrue(flag, String.format("The db doesn't contain all the vehicleGroupNames (particularly:%s) in the json for aisIncentiveId = ", jsonVehicleGroupName, getAisIncentive().getId()));
+//            System.out.println();
+//
+//        }
+//    }
+//
+//    @Then("^the values of modelYear should be the same in the response and db$")
+//    public void theValuesOfModelYearsShouldBeTheSameInTheResponseAndDb() {
+//
+//        VehicleGroup vg = getVehicleGroup();
+//        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
+//        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+//        int jsonModelYear = 0;
+//        for (int i = 0; i < numberOfVehicleGroups; i++) {
+//            boolean flag = false;
+//            for (VehicleGroup dbvg : dbVehicleGroups) {
+//                System.out.println("\n" + i + ") db modelYear:" + dbvg.getModelYear());
+//                jsonModelYear = responseJsonPath.get(String.format("response[%d].modelYear", i));
+//                System.out.println(i + ") js modelYear:" + jsonModelYear);
+//                if (dbvg.getModelYear() == jsonModelYear) {
+//                    dbVehicleGroups.remove(dbvg);
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            Assert.assertTrue(flag, String.format("The db doesn't contain all the modelYears (particularly:%d) in the json for aisIncentiveId = ", jsonModelYear, getAisIncentive().getId()));
+//            System.out.println();
+//        }
+//    }
+//
+//    @Then("^the values of marketingYear should be the same in the response and db$")
+//    public void theValuesOfMarketingYearsShouldBeTheSameInTheResponseAndDb() {
+//
+//        VehicleGroup vg = getVehicleGroup();
+//        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
+//        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+//        int jsonMarketingYear = 0;
+//        for (int i = 0; i < numberOfVehicleGroups; i++) {
+//            boolean flag = false;
+//            for (VehicleGroup dbvg : dbVehicleGroups) {
+//                System.out.println("\n" + i + ") db marketingYear:" + dbvg.getMarketingYear());
+//                jsonMarketingYear = Integer.parseInt(responseJsonPath.get(String.format("response[%d].marketingYear", i)).toString());
+//                System.out.println(i + ") js marketingYear:" + jsonMarketingYear);
+//                if (dbvg.getMarketingYear() == jsonMarketingYear) {
+//                    dbVehicleGroups.remove(dbvg);
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            Assert.assertTrue(flag, String.format("The db doesn't contain all the marketingYears (particularly:%d) in the json for aisIncentiveId = ", jsonMarketingYear, getAisIncentive().getId()));
+//            System.out.println();
+//        }
+//    }
+//
+//    @Then("^the values of regionID should be the same in the response and db$")
+//    public void theValuesOfRegionIDShouldBeTheSameInTheResponseAndDb() {
+//
+//        VehicleGroup vg = getVehicleGroup();
+//        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
+//        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+//        int jsonRegionID = 0;
+//        for (int i = 0; i < numberOfVehicleGroups; i++) {
+//            boolean flag = false;
+//            for (VehicleGroup dbvg : dbVehicleGroups) {
+//                System.out.println("\n" + i + ") db regionID:" + dbvg.getRegionId());
+//                jsonRegionID = responseJsonPath.get(String.format("response[%d].regionID", i));
+//                System.out.println(i + ") js regionID:" + jsonRegionID);
+//                if (dbvg.getRegionId() == jsonRegionID) {
+//                    dbVehicleGroups.remove(dbvg);
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            Assert.assertTrue(flag, String.format("The db doesn't contain all the regionIDs (particularly:%d) in the json for aisIncentiveId = ", jsonRegionID, getAisIncentive().getId()));
+//            System.out.println();
+//        }
+//    }
+//
+//    @Then("^the values of hashcodes should be the same in the response and db$")
+//    public void theValuesOfHashcodesShouldBeTheSameInTheResponseAndDb() {
+//
+//        VehicleGroup vg = getVehicleGroup();
+//        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
+//        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+//        String jsonHashcode = null;
+//        for (int i = 0; i < numberOfVehicleGroups; i++) {
+//            boolean flag = false;
+//            for (VehicleGroup dbvg : dbVehicleGroups) {
+//                System.out.println("\n" + i + ") db hashcode:" + dbvg.getHash());
+//                jsonHashcode = responseJsonPath.get(String.format("response[%d].hashcode", i));
+//                System.out.println(i + ") js hashcode:" + jsonHashcode);
+//                if (dbvg.getHash().equalsIgnoreCase(jsonHashcode)) {
+//                    dbVehicleGroups.remove(dbvg);
+//                    flag = true;
+//                    break;
+//                }
+//            }
+//            Assert.assertTrue(flag, String.format("The db doesn't contain all the hashcodes (particularly:%s) in the json for aisIncentiveId = %s", jsonHashcode, getAisIncentive().getId()));
+//            System.out.println();
+//
+//        }
+//    }
 
     @Then("^the acodes should be the same in the response and db$")
     public void theAcodesShouldBeTheSameInTheResponseAndDb() {
@@ -570,34 +533,34 @@ public class OperationsStepDef extends base {
         }
     }
 
-    @Then("^get number (\\d+) vehicleGroup of the response$")
-    public void getTheFirstVehicleGroupIdOfTheResponse(int number) {
-
-        OperationsStepDef.number = number;
-        VehicleGroup vg = getVehicleGroup();
-        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
-
-        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
-
-        String jsonAisVehicleGroupId = responseJsonPath.get(String.format("response[%d].aisVehicleGroupID", number));
-
-        for (VehicleGroup vgdb : dbVehicleGroups) {
-            if (vgdb.getAisVehicleGroupId().equalsIgnoreCase(jsonAisVehicleGroupId)) {
-                vehicleGroupTerm = vgdb;
-            }
-        }
-        if (vehicleGroupTerm == null) {
-            System.out.println(String.format("\n\n!IMPORTANT! No vehicleGroups found in db for 'aisIncentiveId' = %s " +
-                    "and with aisVehicleGroupid = %s", getAisIncentive().getId(), jsonAisVehicleGroupId));
-
-        }
-        if (number == 1)
-            System.out.println(String.format("%nnumber %sst vehicle group = ", number) + vehicleGroupTerm);
-        else
-            System.out.println(String.format("%nnumber %snd vehicle group = ", number) + vehicleGroupTerm);
-
-        System.out.println();
-    }
+//    @Then("^get number (\\d+) vehicleGroup of the response$")
+//    public void getTheFirstVehicleGroupIdOfTheResponse(int number) {
+//
+//        OperationsStepDef.number = number;
+//        VehicleGroup vg = getVehicleGroup();
+//        List<VehicleGroup> dbVehicleGroups = q_a.getVehicleGroupsByAISIncentiveIdAndVin(vg.getAisIncentiveId(), vg.getVin());
+//
+//        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+//
+//        String jsonAisVehicleGroupId = responseJsonPath.get(String.format("response[%d].aisVehicleGroupID", number));
+//
+//        for (VehicleGroup vgdb : dbVehicleGroups) {
+//            if (vgdb.getAisVehicleGroupId().equalsIgnoreCase(jsonAisVehicleGroupId)) {
+//                vehicleGroupTerm = vgdb;
+//            }
+//        }
+//        if (vehicleGroupTerm == null) {
+//            System.out.println(String.format("\n\n!IMPORTANT! No vehicleGroups found in db for 'aisIncentiveId' = %s " +
+//                    "and with aisVehicleGroupid = %s", getAisIncentive().getId(), jsonAisVehicleGroupId));
+//
+//        }
+//        if (number == 1)
+//            System.out.println(String.format("%nnumber %sst vehicle group = ", number) + vehicleGroupTerm);
+//        else
+//            System.out.println(String.format("%nnumber %snd vehicle group = ", number) + vehicleGroupTerm);
+//
+//        System.out.println();
+//    }
 
     @Then("^the cashTotals under consumer cash should be the same in the db and json$")
     public void theCashTotalsUnderConsumerCashShouldBeTheSameInTheDbAndJson() {

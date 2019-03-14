@@ -27,9 +27,6 @@ public class base {
     private static int eligibleCount;
     private static int aisIncentivesCount;
 
-    private static AISIncentive aisIncentive;
-    private static VehicleGroup vehicleGroup;
-    private static List<VehicleGroup> vehicleGroups;
 
 
     public void initBase() {
@@ -85,31 +82,6 @@ public class base {
 
     public static void setAisIncentivesCount(int aisIncentivesCount) {
         base.aisIncentivesCount = aisIncentivesCount;
-    }
-
-
-    public static AISIncentive getAisIncentive() {
-        return aisIncentive;
-    }
-
-    public static void setAisIncentive(AISIncentive aisIncentive) {
-        base.aisIncentive = aisIncentive;
-    }
-
-    public static VehicleGroup getVehicleGroup() {
-        return vehicleGroup;
-    }
-
-    public static void setVehicleGroup(VehicleGroup vehicleGroup) {
-        base.vehicleGroup = vehicleGroup;
-    }
-
-    public static List<VehicleGroup> getVehicleGroups() {
-        return vehicleGroups;
-    }
-
-    public static void setVehicleGroups(List<VehicleGroup> vehicleGroups) {
-        base.vehicleGroups = vehicleGroups;
     }
 
 

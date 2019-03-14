@@ -256,13 +256,13 @@ public class RestStepDef extends compatibleBase {
         }
     }
 
-    @When("^adding to the api path the vin and (.+) of the vehicle$")
-    public void addingToTheApiPathTheVinAndZipOfTheVehicle(String zip) {
-
-        this.url += getVehicleGroup().getVin();
-        this.url += "/"+zip+".json";
-
-    }
+//    @When("^adding to the api path the vin and (.+) of the vehicle$")
+//    public void addingToTheApiPathTheVinAndZipOfTheVehicle(String zip) {
+//
+//        this.url += getVehicleGroup().getVin();
+//        this.url += "/"+zip+".json";
+//
+//    }
 
 
     @Then("^make a call for each make and print the number of postalCodes per regionId for a make$")

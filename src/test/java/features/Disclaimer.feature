@@ -29,10 +29,10 @@ Feature: AISFeedDownload
     When perform the get request
     When fetch all the programIds from the response
     Then There should be no duplicate programIds in the json response
-    Then we should have all the programs in our db
-    Then the number of programs in json response should be less or equal to the number of programLocals in db
-    Then we should have a programLocal for every program in db
-    Then we should have a programLocalDescription for every programLocal in db
+#    Then we should have all the programs in our db
+#    Then the number of programs in json response should be less or equal to the number of programLocals in db
+#    Then we should have a programLocal for every program in db
+#    Then we should have a programLocalDescription for every programLocal in db
 
 
   @AIS

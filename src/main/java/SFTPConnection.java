@@ -32,6 +32,7 @@ public class SFTPConnection {
             Channel channel = session.openChannel("sftp");
             channel.connect();
             ChannelSftp sftpChannel = (ChannelSftp) channel;
+
             sftpChannel.get("/incentivesfeeds/acura/20190125000000.547-9f0af2633f314d9badc5619b83ee37e1/process/vandergriffacuraadw-76017.xml",
                     "src/main/java/resources/test.xml");
             sftpChannel.exit();
