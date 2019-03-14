@@ -66,19 +66,19 @@ public class RestStepDef extends compatibleBase {
     }
 
     @Given("^the server endpoint is (.+)$")
-    public void the_server_endpoint_is(String host) throws Throwable {
+    public void the_server_endpoint_is(String host){
         this.url = host;
     }
 
     @Given("^the apis are up and running for (.+)$")
-    public void the_apis_are_up_and_running_for(String url) throws Throwable {
+    public void the_apis_are_up_and_running_for(String url){
         this.url = url;
         response = given().when().get(url);
         Assert.assertEquals(200, response.getStatusCode());
     }
 
     @When("^adding to the api path (.+)$")
-    public void adding_to_the_api_path(String apiUrl) throws Throwable {
+    public void adding_to_the_api_path(String apiUrl){
         this.url += apiUrl;
     }
 
@@ -98,7 +98,7 @@ public class RestStepDef extends compatibleBase {
     }
 
     @And("^adding following headers$")
-    public void iAddFollowingHeaders(DataTable dataTable) throws Throwable {
+    public void iAddFollowingHeaders(DataTable dataTable) {
 
         for (DataTableRow row : dataTable.getGherkinRows()) {
 
@@ -117,7 +117,7 @@ public class RestStepDef extends compatibleBase {
     }
 
     @When("^perform the get request$")
-    public void perform_the_request() throws Throwable {
+    public void perform_the_get_request(){
 
         System.out.println("\n"+this.url);
         response = request.when().get(this.url);
@@ -125,7 +125,7 @@ public class RestStepDef extends compatibleBase {
     }
 
     @And("^perform the post request$")
-    public void andPerformThePostRequest() throws Throwable {
+    public void andPerformThePostRequest(){
         if(this.body!=null) {
             response = request.contentType(ContentType.JSON).body(this.body).when().post(this.url);
         }
@@ -136,13 +136,13 @@ public class RestStepDef extends compatibleBase {
     }
 
     @And("^perform the post request sending an array$")
-    public void andPerformThePostRequestSendingAnArray() throws Throwable {
+    public void andPerformThePostRequestSendingAnArray(){
         response = request.given().contentType(ContentType.JSON).body(this.bodyLikeArray).when().post(this.url);
         responseHolder.setResponse(response);
     }
 
     @Then("^the response code should be (\\d+)$")
-    public void the_response_code_should_be(int responseCode) throws Throwable {
+    public void the_response_code_should_be(int responseCode){
         Assert.assertEquals(responseHolder.getResponseCode(), responseCode);
     }
 
@@ -265,61 +265,78 @@ public class RestStepDef extends compatibleBase {
     }
 
 
-    @Then("^print the number of postalCodes per regionId (.+)$")
-    public void printTheNumberOfPostalCodesPerRegionId(String make) {
-        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+    @Then("^make a call for each make and print the number of postalCodes per regionId for a make$")
+    public void printTheNumberOfPostalCodesPerRegionId(DataTable dataTable) {
+        List<String> makes = new ArrayList<String>();
 
-        if (distinctRegions==null) {
-            distinctRegions = new HashSet<Integer>();
-            regionZipMap = new HashMap<Integer, Integer>();
+        for (DataTableRow row : dataTable.getGherkinRows()) {
+            makes.add(row.getCells().get(0));
         }
-        System.out.println(make);
-        int regionIdsSize = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regioID.size()"));
-        System.out.println(regionIdsSize);
-        for (int i = 0; i < regionIdsSize; i++) {
-            int regionId = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regionID[%d]", i));
-            int zipCount = responseJsonPath.get(String.format("response.regionPostalcodeGroups.postalcodes[%d].size", i));
 
-            distinctRegions.add(regionId);
-            regionZipMap.put(regionId, zipCount);
+        distinctRegions = new HashSet<Integer>();
+        notDistinctRegions = new ArrayList<>();
 
-            System.out.println(regionId + " : " + zipCount);
+        regionZipMap = new HashMap<Integer, Integer>();
+        for(String make : makes) {
+            the_server_endpoint_is("https://incentives.homenetiol.com/v2.6/CA/GetPostalcodesByMake/");
+            adding_to_the_api_path(make);
+            perform_the_get_request();
+            the_response_code_should_be(200);
+            JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+
+            System.out.println(make);
+            int regionIdsSize = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regioID.size()"));
+            System.out.println(regionIdsSize);
+            for (int i = 0; i < regionIdsSize; i++) {
+                int regionId = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regionID[%d]", i));
+                int zipCount = responseJsonPath.get(String.format("response.regionPostalcodeGroups.postalcodes[%d].size", i));
+
+                distinctRegions.add(regionId);
+                notDistinctRegions.add(regionId);
+
+                regionZipMap.put(regionId, zipCount);
+                System.out.println(regionId + " : " + zipCount);
+            }
         }
-        System.out.println("%nDistinct regionIds = " + distinctRegions.size());
+        System.out.println("\nDistinct regionIds = " + distinctRegions.size());
+        System.out.println("\nNot distinct regionIds = " + notDistinctRegions.size());
 
-//        for (Integer regionId : distinctRegions) {
-//            System.out.println(regionId);
-//        }
-
-        int totalPairs = 0;
+        totalPairs = 0;
         int i=1;
         Iterator entries = regionZipMap.entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry entry = (Map.Entry) entries.next();
             int key = (int) entry.getKey();
             int value = (int) entry.getValue();
-            System.out.println(i++ + ")RegionId : " + key + " = " + value + " postal code");
+            System.out.println(i++ + ")RegionId : " + key + " = " + value + " postal codes");
             totalPairs+=value;
         }
         System.out.println("#TOTAL PAIRS = " + totalPairs);
 
     }
 
-//    @Then("^save in a set all the postalCodes$")
-//    public void saveInASetAllThePostalCodes() {
-//        JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
-//        Set<Integer> totalRegions = new HashSet<Integer>();
-//
-//        int regionIds = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regioID.size()"));
-//        System.out.println("\n"+regionIds);
-//        for(int i = 0; i<regionIds; i++) {
-//            int regionId = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regionID[%d]", i));
-//
-//            List<String> postalCodes = responseJsonPath.get(String.format("response.regionPostalcodeGroups.postalcodes[%d]", i));
-//            System.out.println(regionId + " : " + postalCodes.size());
-//        }
-//
-//    }
+
+    @Then("^make a call to IS with each regionId we should get the same number of postalCodes in the response as in the db$")
+    public void makeACallToISWithEachRegionIdWeShouldGetTheSameNumberOfPostalCodesInTheResponseAsInTheDb() {
+        System.out.println();
+        Iterator entries = regionIdPostalCodePairs.entrySet().iterator();
+        int i=1;
+
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            String key =  (String)entry.getKey();
+            int value = (int) entry.getValue();
+            System.out.println(i++ + ")RegionId : " + key + " has " + value + " postalCodes");
+
+            the_server_endpoint_is("http://vtqainv-incentivessvc03.int.dealer.com:9620/incentives-services/rest/api/v1/AisRegionDetailsService/getPostalCodes/");
+            adding_to_the_api_path(key);
+            perform_the_get_request();
+            int responseArraySize = ResponseHolder.lengthOfArray("$");
+            System.out.println("Number of postalCodes in the IS API response = " + responseArraySize);
+            Assert.assertEquals(value,responseArraySize,String.format("The amount of postalCodes for regionId[%s] is not equal in the db/API response --> %d = %d",key,value,responseArraySize));
+            System.out.println();
+        }
+    }
 }
 
 

@@ -5,7 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLOutput;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class QueriesCombined {
 
@@ -148,5 +150,47 @@ public class QueriesCombined {
         }
 
     }
+
+    public int getNumberOfPostalCodesWithRegionId(int regionId) {
+        Statement stmt = mysqlCon.getStatement();
+        int count = 0;
+
+        try {
+
+            ResultSet rs = stmt.executeQuery(String.format("SELECT COUNT(*) FROM aisRegionDetails where regionId = '%d';",regionId));
+
+            rs.next();
+            count = rs.getInt(1);
+
+        } catch (Exception e) {
+            System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
+            e.printStackTrace();
+        } finally {
+            mysqlCon.endCon();
+            return count;
+        }
+
+    }
+    public Map<String,Integer> getDistinctRegionIdAndCountOfPostalCodes() {
+        Statement stmt = mysqlCon.getStatement();
+        Map<String,Integer> regionIdPostalCode = new HashMap<>();
+
+        try {
+
+            ResultSet rs = stmt.executeQuery(String.format("SELECT regionId,count(*) from aisRegionDetails group by regionId;"));
+            while (rs.next()) {
+                regionIdPostalCode.put(rs.getString(1),rs.getInt(2));
+            }
+
+        } catch (Exception e) {
+            System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
+            e.printStackTrace();
+        } finally {
+            mysqlCon.endCon();
+            return regionIdPostalCode;
+        }
+
+    }
+
 
 }

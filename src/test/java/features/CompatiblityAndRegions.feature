@@ -40,55 +40,57 @@ Feature: Compatibility
       | src/main/java/resources/AIS_CA-FORD.xml |
 
 
-  @Sanjeeva'sStory
-  Scenario Outline: Getting the number of postal codes by regionId with make
+  @RegionIdPostalCodes1
+  Scenario: Getting the number of postal codes by regionId with make, distinct regionIds and total pairs assertions included
     Given Initialization
     Given initCompatibility
-    Given the server endpoint is https://incentives.homenetiol.com/v2.6/CA/GetPostalcodesByMake/
-    When adding to the api path <make>
     When adding following headers
       | AIS-ApiKey   | 85C88437-7536-48FE-8914-4383CED65BA2 |
       | Content-Type | application/json                     |
-    When perform the post request
-    Then the response code should be 200
-    Then print the number of postalCodes per regionId <make>
-    Then There should be euqal or more items in the db than the total # of items in ais response
-    Then there should be equal or more distinct regionIds in the db than in the ais response
-
-    Examples:
-      | make          |
+    Then make a call for each make and print the number of postalCodes per regionId for a make
       | VOLVO         |
       | VOLKSWAGEN    |
-#      | TOYOTA        |
-#      | SUBARU        |
-#      | SMART         |
-#      | SCION         |
-#      | RAM           |
-#      | PORSCHE       |
-#      | NISSAN        |
-#      | MITSUBISHI    |
-#      | MINI          |
-#      | MERCEDES-BENZ |
-#      | MAZDA         |
-#      | LINCOLN       |
-#      | LEXUS         |
-#      | LAND ROVER    |
-#      | KIA           |
-#      | JEEP          |
-#      | JAGUAR        |
-#      | INFINITI      |
-#      | HYUNDAI       |
-#      | HONDA         |
-#      | GMC           |
-#      | GENESIS       |
-#      | FORD          |
-#      | FIAT          |
-#      | DODGE         |
-#      | CHRYSLER      |
-#      | CHEVROLET     |
-#      | cadillac      |
-#      | BUICK         |
-#      | BMW           |
-#      | AUDI          |
-#      | ALFA ROMEO    |
-#      | ACURA         |
+      | TOYOTA        |
+      | SUBARU        |
+      | SMART         |
+      | SCION         |
+      | RAM           |
+      | PORSCHE       |
+      | NISSAN        |
+      | MITSUBISHI    |
+      | MINI          |
+      | MERCEDES-BENZ |
+      | MAZDA         |
+      | LINCOLN       |
+      | LEXUS         |
+      | LAND ROVER    |
+      | KIA           |
+      | JEEP          |
+      | JAGUAR        |
+      | INFINITI      |
+      | HYUNDAI       |
+      | HONDA         |
+      | GMC           |
+      | GENESIS       |
+      | FORD          |
+      | FIAT          |
+      | DODGE         |
+      | CHRYSLER      |
+      | CHEVROLET     |
+      | cadillac      |
+      | BUICK         |
+      | BMW           |
+      | AUDI          |
+      | ALFA ROMEO    |
+      | ACURA         |
+    Then There should be euqal or more items in the db than the total # of items in ais response
+    Then there should be equal or more distinct regionIds in the db than in the ais response
+    Then each regionId should have equal amount of postalCodes mapped to it
+
+
+  @RegionIdPostalCodes2
+  Scenario: Incentives Services WebService API test (making sure we get all the postalCodes that exist in the db for a regionId)
+    Given Initialization
+    Given initCompatibility
+    When get the distinct postalCodes with the amount of regionIDs from the db
+    Then make a call to IS with each regionId we should get the same number of postalCodes in the response as in the db
