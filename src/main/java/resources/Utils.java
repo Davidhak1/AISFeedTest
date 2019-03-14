@@ -102,4 +102,15 @@ public class Utils {
         model = id.substring(0,id.indexOf('_'));
         return model;
     }
+
+    public static String getTheRightFolderName(List<String> fileNames, String feedRunId)
+    {
+        for(String s: fileNames)
+        {
+            if(s.contains(feedRunId))
+                return s;
+        }
+        System.out.println("\nERROR --- There is no folder in ais-directory containing following feedRunId in the name ->" + feedRunId);
+        return null;
+    }
 }
