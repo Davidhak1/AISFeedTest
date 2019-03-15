@@ -13,17 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 public class OperationsStepDef extends base {
-//    ResponseHolder responseHolder;
-//    Response response;
-//    RequestSpecification request;
-//    Map<String, Object> responseMap;
-//    ArrayList<HashMap<String, String>> responseMapArray;
-//    Map<String, String> body;
-//    List<String> bodyLikeArray;
-//    private String url;
 
-    //    private String feedRunId;
-//    private int eligibleCo"eligibleCo?vesCount/?/;
     private static int numberOfVehicleGroups;
     private static int numberOfVehicleCodes;
     private static int numberOfVehicleMatchDetails;
@@ -49,14 +39,14 @@ public class OperationsStepDef extends base {
 
     }
 
-    @When("^Get the number of ais CA eligible vehicles for (.+) and (.+)$")
-    public void getTheNumberOfAisCAEligibleVehiclesForThirdPartyIdAndMake(String thirdPartyId, String make) {
-        setEligibleCount(q_n.getNumberOfVehiclesWithAccountIdOemAndNewAndNotRemoved(thirdPartyId, make));
-        System.out.println(String.format("AccountId = '%s', make = '%s'",thirdPartyId,make));
-        System.out.println("eligibleCount = " + getEligibleCount());
-        System.out.println();
-
-    }
+//    @When("^Get the number of ais CA eligible vehicles for (.+) and (.+)$")
+//    public void getTheNumberOfAisCAEligibleVehiclesForThirdPartyIdAndMake(String thirdPartyId, String make) {
+//        setEligibleCount(q_n.getNumberOfVehiclesWithAccountIdOemAndNewAndNotRemoved(thirdPartyId, make));
+//        System.out.println(String.format("AccountId = '%s', make = '%s'",thirdPartyId,make));
+//        System.out.println("eligibleCount = " + getEligibleCount());
+//        System.out.println();
+//
+//    }
 
     @When("^Get the number of vehicles having vehicleGroup in DB with the latest feedRunId (.+) and (.+)$")
     public void getTheNumberOfAisIncentivesWithTheLatestFeedRunIdAccountIdAndMake(String accountId, String make) {
@@ -124,7 +114,7 @@ public class OperationsStepDef extends base {
 //            System.out.println();
 //        }
 //    }
-//
+////
 //    @Then("^the values of vehicleGroupIds should be the same in the response and db$")
 //    public void theValuesOfVehicleGroupIdsShouldBeTheSameInTheResponseAndDb() {
 //

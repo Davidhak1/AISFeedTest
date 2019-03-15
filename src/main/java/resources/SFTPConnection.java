@@ -64,7 +64,7 @@ public class SFTPConnection {
             List<String> aisFiles = ls(path+latestFeedFolder+"/download");
             System.out.println(aisFiles);
 
-            FileUtils.cleanDirectory(new File("src/main/java/resources/aisFiles"));
+            FileUtils.cleanDirectory(new File(savePath));
 
             for(String file : aisFiles){
                 sftpChannel.get(path + latestFeedFolder + "/download/"+file,

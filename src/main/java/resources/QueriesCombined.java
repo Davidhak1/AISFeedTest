@@ -4,10 +4,7 @@ package resources;
 import java.sql.ResultSet;
 import java.sql.SQLOutput;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class QueriesCombined {
 
@@ -188,6 +185,40 @@ public class QueriesCombined {
         } finally {
             mysqlCon.endCon();
             return regionIdPostalCode;
+        }
+
+    }
+
+
+    public List<String> getAccount_makePairsWithSourceAccountId(String sourceAccountId){
+
+        Statement stmt = mysqlCon.getStatement();
+        Statement stmt2 = mysqlCon.getStatement();
+
+        String accountId;
+        String makeCode;
+        String make;
+        List<String> account_make = new LinkedList<>();
+        try {
+
+            ResultSet rs = stmt.executeQuery(String.format("SELECT accountId, makeCode from feedConfig where sourceAccountId = '%s'",sourceAccountId));
+            while (rs.next()) {
+               accountId =  rs.getString(1);
+               makeCode = rs.getString(2);
+
+               ResultSet rs2 = stmt2.executeQuery(String.format("SELECT make from dealerFeedOffers where makeCode = '%s'",makeCode));
+               rs2.next();
+               make = rs2.getString(1);
+
+               account_make.add(accountId+"_"+make);
+            }
+
+        } catch (Exception e) {
+            System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
+            e.printStackTrace();
+        } finally{
+            mysqlCon.endCon();
+            return account_make;
         }
 
     }
