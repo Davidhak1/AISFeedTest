@@ -10,14 +10,14 @@ public class QueriesCombined {
 
     private MysqlConIMDB mysqlCon = new MysqlConIMDB();
 
-    public String getTheLatestSuccessfulAISFeedRunIDThatHasRecordsInAISIncentiveTable() {
+    public String getTheLatestAISFeedRunIDWithStatus(String status) {
         Statement stmt = mysqlCon.getStatement();
         String feedRunId = null;
 
         try {
 
             ResultSet rs = stmt.executeQuery(String.format("select id from incentiveFeedRun where thirdPartyId = 'AIS-CANADA' " +
-                    "and status = 'success' order by endTime DESC limit 1;"));
+                    "and status = '%s' order by endTime DESC limit 1;",status));
 
             while (rs.next()) {
                 feedRunId = rs.getString(1);

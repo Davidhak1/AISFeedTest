@@ -25,16 +25,15 @@ public class OperationsStepDef extends base {
 
     @Given("^Operations Initialization$")
     public void operInitialization() {
-        System.out.println("INSIDE OPERINIT ---------------");
+//        System.out.println("INSIDE OPERINIT ---------------");
         initBase();
 
     }
 
-    @When("^Get the id of the latest successful feedRun for AIS_CA$")
-    public void getTheIdOfTheLatestSuccessfulFeedRunForAIS_CA() {
-        setFeedRunId(q_c.getTheLatestSuccessfulAISFeedRunIDThatHasRecordsInAISIncentiveTable());
-        setFeedRunId("a993a1ca8a3d462b97d1d763fc6d6a85");
-        System.out.println("Latest Successful feedRunID = " + getFeedRunId());
+    @When("^Get the id of the latest (.+) feedRun for AIS_CA$")
+    public void getTheIdOfTheLatestSFeedRunForAIS_CAWithStatus(String status) {
+        setFeedRunId(q_c.getTheLatestAISFeedRunIDWithStatus(status));
+        System.out.println("Latest " + status + " feedRunID = " + getFeedRunId());
         System.out.println();
 
     }

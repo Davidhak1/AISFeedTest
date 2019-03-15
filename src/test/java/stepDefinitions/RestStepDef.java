@@ -54,7 +54,7 @@ public class RestStepDef extends compatibleBase {
 
     @Given("^Initialization$")
     public void initialization() {
-        System.out.println("\nINSIDE INIT---------------");
+//        System.out.println("\nINSIDE INIT---------------");
         initBase();
         request = RestAssured.with();
 

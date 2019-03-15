@@ -145,7 +145,6 @@ public class Utils {
             sc = new Scanner(inputStream, "UTF-8");
             while (sc.hasNextLine()) {
                 line = sc.nextLine();
-                System.out.println(line);
             }
             // note that Scanner suppresses exceptions
             if (sc.ioException() != null) {
