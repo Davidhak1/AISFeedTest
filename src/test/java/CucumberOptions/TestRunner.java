@@ -15,8 +15,8 @@ import java.io.File;
 @CucumberOptions(
 		features = "src/test/java/features",
 		glue="stepDefinitions",
-//        tags = {"@AIS"},
-        tags = {"@AIS-DISCLAIMER"},
+        tags = {"@Region"},
+//        tags = {"@AIS-DISCLAIMER"},
 //		  tags = {"@DB-Response-validation"
 //        tags = {"@Incentives-Services-API"},
         plugin={"com.cucumber.listener.ExtentCucumberFormatter:target/html/report.html"},

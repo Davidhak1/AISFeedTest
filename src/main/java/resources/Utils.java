@@ -167,5 +167,21 @@ public class Utils {
             return line;
         }
     }
+
+
+    public static Integer hasDuplicates(List<Integer> array) {
+        boolean duplicates = false;
+        for (int j = 0; j < array.size()-1; j++) {
+            for (int k = j+1; k < array.size(); k++) {
+                if ((int)array.get(k) == (int)array.get(j)) {
+                    duplicates = true;
+                    return array.get(k);
+                }
+            }
+
+        }
+        return null;
+    }
 }
+
 

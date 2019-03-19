@@ -45,6 +45,7 @@ public class RestStepDef extends compatibleBase {
     Map<String, Object> responseMap;
     ArrayList<HashMap<String, String>> responseMapArray;
     Map<String, String> body;
+    String stringBody;
     List<String> bodyLikeArray;
 //    public static Set<Integer> distinctRegions;
 //    public static Map<Integer,Integer> regionZipMap;
@@ -91,6 +92,13 @@ public class RestStepDef extends compatibleBase {
         }
 
     }
+    @When("^adding string api body to post request")
+    public void addingStringBodyToPostRequest(String body){
+
+            this.stringBody = body;
+
+    }
+
 
     @When("^adding basic authentication (.+) (.+)$")
     public void addingAuthenticationVcdaWhatAPrJCtPasswRd(String username, String password) {
@@ -107,7 +115,13 @@ public class RestStepDef extends compatibleBase {
         }
 
     }
+    @And("^adding following header$")
+    public void iAddFollowingHeader(String key, String value) {
 
+            request.header(key, value);
+
+
+    }
     @When("adding following parameters")
     public void adding_following_parameters(DataTable dataTable) {
 
@@ -128,6 +142,9 @@ public class RestStepDef extends compatibleBase {
     public void andPerformThePostRequest(){
         if(this.body!=null) {
             response = request.contentType(ContentType.JSON).body(this.body).when().post(this.url);
+        }
+        if(stringBody !=null){
+            response = request.contentType(ContentType.JSON).body(this.stringBody).when().post(this.url);
         }
         else
             response = request.contentType(ContentType.JSON).when().post(this.url);
@@ -325,6 +342,10 @@ public class RestStepDef extends compatibleBase {
         while (entries.hasNext()) {
             Map.Entry entry = (Map.Entry) entries.next();
             String key =  (String)entry.getKey();
+//            if(key.equalsIgnoreCase("23887"))
+//            {
+//                continue;
+//            }
             int value = (int) entry.getValue();
             System.out.println(i++ + ")RegionId : " + key + " has " + value + " postalCodes");
 

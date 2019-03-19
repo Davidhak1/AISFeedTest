@@ -39,7 +39,7 @@ Feature: Compatibility
       | path                                    |
       | src/main/java/resources/AIS_CA-FORD.xml |
 
-
+   @Region
   @RegionIdPostalCodes1
   Scenario: Getting the number of postal codes by regionId with make, distinct regionIds and total pairs assertions included
     Given Initialization
@@ -87,7 +87,7 @@ Feature: Compatibility
     Then there should be equal or more distinct regionIds in the db than in the ais response
     Then each regionId should have equal amount of postalCodes mapped to it
 
-
+  @Region
   @RegionIdPostalCodes2
   Scenario: Incentives Services WebService API test (making sure we get all the postalCodes that exist in the db for a regionId)
     Given Initialization
