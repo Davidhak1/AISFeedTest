@@ -11,6 +11,13 @@ Feature: Download
   Scenario: Load all ais files for the latest feedRunId and make sure we create a file for each subscribed make
     When Get the id of the latest ABORTED feedRun for AIS_CA
     When load all ais files
+    When Get the names of all files downloaded from ais
+    Then files with following names should be there
+      | VinsWithMoreThanTwoIncentives.json |
+      | VinsWithNoIncentives.json          |
+      | VehicleHints.json                  |
+      | ProgramDetails.json                |
+
 
   @AIS
   @DB_Download-validation
@@ -21,6 +28,7 @@ Feature: Download
     When Get the total number of vehicles from the files
     Then The difference between the totals of vehicles should be less than 25
 
+
   @AIS
   @DB_Download-validation
   Scenario:Test that vins in vinsWithNoVehicleGroups file return empty response from AIS
@@ -28,6 +36,7 @@ Feature: Download
     When make a post request ready for AIS
     When Save vehicleHints for those vins with 100 pagination
     Then there should not be any vehicleGroups in the response
+
 
   @AIS
   @DB_Download-validation
@@ -50,10 +59,7 @@ Feature: Download
       | dealerSpecials           |
       | dealerCash               |
       | totalConsumerCash        |
-#      | cashPrograms             |
-#      | hashcode                 |
-#      | consumerSpecials         |
-#      | adjRate                  |
+
 
   @AIS
   @DB_Download-validation
@@ -62,6 +68,7 @@ Feature: Download
     When Get the vehicleGroups from the files
     Then we should not have duplicate vehicleGroupIds in the files
 
+
   @AIS
   @DB_Download-validation
   Scenario:Test that vehicleGroupsVin and vinVehicleGroups fields contsin the same amount of mapping in each file
@@ -69,4 +76,3 @@ Feature: Download
     When Get the number of unique mappings from vehicleGroupVins field
     When Get the number of unique mappings from vinVehicleGroups field
     Then the total Number of mappings should be equalsIgnoreCase
-

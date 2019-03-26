@@ -32,5 +32,31 @@ public class QueriesNexusVehicle {
 
     }
 
+    public String getPostalCodeWithAccountId(String accountId) {
+        Statement stmt = mysqlCon.getStatement();
+        String postalCode = null;
+        try {
+
+            ResultSet rs = stmt.executeQuery(String.format("select postal_code from `account_stats` where account_id = '%s'" +
+                    " order by year desc;", accountId));
+            rs.next();
+            postalCode = rs.getString(1);
+            postalCode = postalCode.replaceAll("\\s+","");
+
+
+        }catch (Exception e){
+            System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
+            e.printStackTrace();
+        }
+
+        finally{
+            mysqlCon.endCon();
+            return postalCode;
+        }
+
+    }
+
+
+
 
 }

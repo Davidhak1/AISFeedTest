@@ -2,31 +2,54 @@ Feature: Compatibility
 
 
   @AIS
+  @Compatibility-initial
+  Scenario: Loading processed file for compatibility check
+    Given Operations Initialization
+    When Get the id of the latest ABORTED feedRun for AIS_CA
+    Then load all ais processed files
+
+  @AIS
   @Compatibility1
   Scenario Outline: Validating that all the incentives having compatibility are type 1
-    Given get the xml file <path>
-    Given initCompatibility
+    Given Get the names of all files processed from ais
+    When getting the xml file with index <index>
+    When initCompatibility
     When get all nodes having compatibleIncentives tag
     Then unqiueId parent nodes of the nodes should be type cash
     Then all the compatibility uniqueIds should be cash
     Examples:
-      | path                                    |
-      | src/main/java/resources/AIS_CA-FORD.xml |
+      | index |
+      | 0     |
+      | 1     |
+      | 2     |
+      | 3     |
+      | 4     |
 
+
+
+  @AIS
   @Compatibility2
-  Scenario Outline: Validating that all the incentives having compatibility with the same model and year
-    Given get the xml file <path>
+  Scenario Outline: Validating compatibility with the same model and year
+    Given Get the names of all files processed from ais
+    Given getting the xml file with index <index>
     Given initCompatibility
     When get all nodes having compatibleIncentives tag
     Then model and year of the compatible nodes should be the same as the ones of parent uniqueId node
     Then all the compatibility uniqueIds should be cash
     Examples:
-      | path                                    |
-      | src/main/java/resources/AIS_CA-FORD.xml |
+      | index |
+      | 0     |
+      | 1     |
+      | 2     |
+      | 3     |
+      | 4     |
 
+
+  @AIS
   @Compatibility3
   Scenario Outline: Validate that compatibleIncenentive table contains the right ammount of mappings
-    Given get the xml file <path>
+    Given Get the names of all files processed from ais
+    Given getting the xml file with index <index>
     Given initCompatibility
     Given Operations Initialization
     When get all incentive nodes of the nodes having compability
@@ -36,10 +59,17 @@ Feature: Compatibility
     Then the incentives in the IMDB should have equal or less compatible incentives than in the xml file
 
     Examples:
-      | path                                    |
-      | src/main/java/resources/AIS_CA-FORD.xml |
+      | index |
+      | 0     |
+      | 1     |
+      | 2     |
+      | 3     |
+      | 4     |
 
-   @Region
+
+
+  @AIS
+  @Region
   @RegionIdPostalCodes1
   Scenario: Getting the number of postal codes by regionId with make, distinct regionIds and total pairs assertions included
     Given Initialization
@@ -87,6 +117,8 @@ Feature: Compatibility
     Then there should be equal or more distinct regionIds in the db than in the ais response
     Then each regionId should have equal amount of postalCodes mapped to it
 
+
+  @AIS
   @Region
   @RegionIdPostalCodes2
   Scenario: Incentives Services WebService API test (making sure we get all the postalCodes that exist in the db for a regionId)
@@ -94,3 +126,30 @@ Feature: Compatibility
     Given initCompatibility
     When get the distinct postalCodes with the amount of regionIDs from the db
     Then make a call to IS with each regionId we should get the same number of postalCodes in the response as in the db
+
+
+  @AIS
+  @RegionLoader
+  @FiveStarCheck
+  @ItsGonnaBeHard
+  Scenario Outline: Validate that the regionId of all incentives mapped to the account contain the zip code of the account
+    Given Get the names of all files processed from ais
+    Given getting the xml file with index <index>
+    Given initCompatibility
+    Given Operations Initialization
+    When get all incentive nodes
+    When save all thirdPartyIncentiveId regionId maps with limit 100
+    When change thirdpartyIncentiveIds to incentiveId if exist
+    When get the list of postal codes of the accounts mapped to those incentives
+    When save the regionId postalCode mapping in interanl memory
+    Then the regionId of an incentive should contain the postalCodes of the accounts mapped to the incentive
+
+    Examples:
+      | index |
+      | 0     |
+      | 1     |
+      | 2     |
+      | 3     |
+      | 4     |
+
+

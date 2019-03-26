@@ -317,7 +317,7 @@ public class RestStepDef extends compatibleBase {
         }
         System.out.println("\nDistinct regionIds = " + distinctRegions.size());
         System.out.println("\nNot distinct regionIds = " + notDistinctRegions.size());
-
+        System.out.println();
         totalPairs = 0;
         int i=1;
         Iterator entries = regionZipMap.entrySet().iterator();

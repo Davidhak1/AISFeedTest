@@ -29,7 +29,7 @@ public class QueriesCombined {
         } finally {
             mysqlCon.endCon();
             if (feedRunId == null) {
-                System.out.printf("%n-No feeds found with feedRunId = %s-%n", feedRunId);
+                System.out.printf("%n-No feeds found with status = %s, feedRunId = %s-%n", status, feedRunId);
             }
             return feedRunId;
         }
@@ -58,7 +58,7 @@ public class QueriesCombined {
         return null;
     }
 
-    public String getIncentiveIdByThirdPartyId( String tpi) {
+    public String getIncentiveIdByThirdPartyId(String tpi) {
         Statement stmt = mysqlCon.getStatement();
         String id = null;
 
@@ -76,7 +76,7 @@ public class QueriesCombined {
         } finally {
             mysqlCon.endCon();
             if (id == null) {
-                System.out.printf("%n-No incentive found with feedRunId = %s-%n", id);
+                System.out.printf("%nNo incentive found with thirdPartyIncentiveId = %s%n", tpi);
             }
             return id;
         }
@@ -168,6 +168,7 @@ public class QueriesCombined {
         }
 
     }
+
     public Map<String,Integer> getDistinctRegionIdAndCountOfPostalCodes() {
         Statement stmt = mysqlCon.getStatement();
         Map<String,Integer> regionIdPostalCode = new HashMap<>();
@@ -188,7 +189,6 @@ public class QueriesCombined {
         }
 
     }
-
 
     public List<String> getAccount_makePairsWithSourceAccountId(String sourceAccountId){
 
@@ -223,5 +223,33 @@ public class QueriesCombined {
 
     }
 
+    public List<String> getAccoutIdsWithMappedIncentiveId(String incentiveId){
+        List<String> accountIds = new ArrayList<>();
 
+        Statement stmt = mysqlCon.getStatement();
+        String accountId;
+        String makeCode;
+        String make;
+        List<String> account_make = new LinkedList<>();
+        try {
+
+            ResultSet rs = stmt.executeQuery(String.format("SELECT accountId from incentiveAccountMap where incentiveId = '%s'",incentiveId));
+            while (rs.next()) {
+                accountId =  rs.getString(1);
+                if(!accountId.equalsIgnoreCase("aiscaincentivesaccount"))
+                accountIds.add(accountId);
+            }
+
+        } catch (Exception e) {
+            System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
+            e.printStackTrace();
+        } finally{
+            mysqlCon.endCon();
+            if(accountIds.isEmpty()) {
+                System.out.println("\nNo account with incentiveId = " + incentiveId);
+                return null;
+            }
+                return accountIds;
+        }
+    }
 }

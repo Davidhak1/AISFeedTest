@@ -86,6 +86,43 @@ public class SFTPConnection {
         }
     }
 
+    public static void downloadTheProcessedFilesFromAISFeed(String feedRunId) {
+        try {
+
+            SFTPCon();
+            String path = prop.getProperty("ais-base-path");
+            String savePath = prop.getProperty("aisProcessSaveDir");
+
+            List<String> fileNames = ls(path);
+            System.out.println(fileNames);
+            String latestFeedFolder = getTheRightFolderName(fileNames, feedRunId);
+            System.out.println(latestFeedFolder);
+
+            List<String> aisFiles = ls(path+latestFeedFolder+"/process");
+            System.out.println(aisFiles);
+
+            FileUtils.cleanDirectory(new File(savePath));
+
+            for(String file : aisFiles){
+                sftpChannel.get(path + latestFeedFolder + "/process/"+file,
+                        savePath+file);
+            }
+
+            sftpChannel.exit();
+            session.disconnect();
+        }
+        catch (JSchException e) {
+            e.printStackTrace();
+        }
+        catch (SftpException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         SFTPConnection test = new SFTPConnection();
         test.downloadTheFilesFromAISFeed("1685c0d0a14b433bb22ea049aa73cb39");

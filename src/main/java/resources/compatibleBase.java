@@ -20,6 +20,8 @@ public class compatibleBase extends base{
     public static Map<Integer,Integer> regionZipMap;
     public static int totalPairs;
 
+    public static List<String> processedFileNames;
+
     public static Map<String,Integer> regionIdPostalCodePairs;
 
 

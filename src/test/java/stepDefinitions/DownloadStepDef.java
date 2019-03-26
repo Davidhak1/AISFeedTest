@@ -11,10 +11,7 @@ import cucumber.api.java.en.When;
 import gherkin.formatter.model.DataTableRow;
 import org.testng.Assert;
 import org.w3c.dom.NodeList;
-import resources.ResponseHolder;
-import resources.SFTPConnection;
-import resources.Utils;
-import resources.base;
+import resources.*;
 
 import javax.xml.ws.Response;
 import javax.xml.xpath.XPath;
@@ -27,21 +24,17 @@ import static java.lang.Math.abs;
 import static resources.Utils.getJsonContentFromFile;
 import static resources.Utils.getXpath;
 
-public class DownloadStepDef extends base {
-    List<String> accMakes;
-    List<String> makeFileNames;
-    List<String> specificVins;
-    int xmlTotalVins;
-    private NodeList vehicleNodes;
-    private String xmlFile;
-    private XPath xpath;
-    private String body;
-    String response;
-    List<String> responses;
-    RestStepDef rsd;
-    List<ArrayList<Integer>> vehicleGroups;
-    int vehicleGroupVinsSize;
-    int vinVehicleGroupsSize;
+public class DownloadStepDef extends compatibleBase {
+    private List<String> accMakes;
+    private List<String> makeFileNames;
+    private List<String> allFileNames;
+    private List<String> specificVins;
+    private int xmlTotalVins;
+    private List<String> responses;
+    private RestStepDef rsd;
+    private List<ArrayList<Integer>> vehicleGroups;
+    private int vehicleGroupVinsSize;
+    private int vinVehicleGroupsSize;
 
 
     @Given("^Download Initialization$")
@@ -54,6 +47,12 @@ public class DownloadStepDef extends base {
     @When("^load all ais files$")
     public void loadAllAisFiles() {
         SFTPConnection.downloadTheFilesFromAISFeed(getFeedRunId());
+    }
+
+    @When("^load all ais processed files$")
+    public void loadAllAisProcessedFiles() {
+        SFTPConnection.downloadTheProcessedFilesFromAISFeed(getFeedRunId());
+
     }
 
     @When("^Get the number of ais CA eligible vehicles for all subscribed accounts and makes from Nexus$")
@@ -76,6 +75,47 @@ public class DownloadStepDef extends base {
         System.out.println("Count of all eligible vehicles = " + getEligibleCount() + "\n");
     }
 
+    @When("^Get the names of all files downloaded from ais$")
+    public void getTheNamesOfAllFilesDownloadedFromAis() {
+        allFileNames = new ArrayList<>();
+        File folder = new File(prop.getProperty("aisSaveDir"));
+        File[] listOfFiles = folder.listFiles();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                System.out.println("File " + listOfFiles[i].getName());
+                allFileNames.add(listOfFiles[i].getName());
+            } else if (listOfFiles[i].isDirectory()) {
+                System.out.println("Directory " + listOfFiles[i].getName());
+            }
+        }
+        System.out.println("allFileNames = "+ allFileNames + "\n");
+
+    }
+
+    @Then("^files with following names should be there$")
+    public void filesWithFollowingNamesShouldBeThere(DataTable dataTable) {
+        List<String> fields = new ArrayList<>();
+        for (DataTableRow row : dataTable.getGherkinRows()) {
+            fields.add(row.getCells().get(0));
+        }
+
+        boolean contains;
+        for (String required : fields)
+        {
+            contains = false;
+            for(String file: allFileNames){
+                if(required.equalsIgnoreCase(file)) {
+                    contains = true;
+                    System.out.printf("%nrequired file/downloaded file = %s = %s", required, file);
+                    break;
+                }
+            }
+            Assert.assertTrue(contains,String.format("We don't have a downloaded file with name %s from AIS",required));
+        }
+    }
+
+
     @When("^Get the names of all make files downloaded from ais$")
     public void getTheNamesOfAllMakeFilesDownloadedFromAis() {
         makeFileNames = new ArrayList<>();
@@ -83,7 +123,7 @@ public class DownloadStepDef extends base {
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile() && listOfFiles[i].getName().contains("AIS_CA")) {
+            if (listOfFiles[i].isFile() && listOfFiles[i].getName().contains("AIS-CA")) {
                 System.out.println("File " + listOfFiles[i].getName());
                 makeFileNames.add(listOfFiles[i].getName());
             } else if (listOfFiles[i].isDirectory()) {
@@ -186,7 +226,7 @@ public class DownloadStepDef extends base {
         LinkedHashMap<String, String> hint = new LinkedHashMap<>();
         ArrayList<String> array = new ArrayList<>();
         responses = new ArrayList<>();
-        body = "{\"vehicleAndPostalcodeFilters\":[";
+        String body = "{\"vehicleAndPostalcodeFilters\":[";
         int i = 0;
 
         for (String vin_acc : specificVins) {
@@ -199,16 +239,16 @@ public class DownloadStepDef extends base {
             System.out.println("Hint = " + hintLine);
 //            System.out.println("i = "+ i + "   specificVins = " + specificVins.size());
             if(++i%page==0 || i==specificVins.size()) {
-                body.substring(0,body.length()-1);
+                body.substring(0, body.length()-1);
 //                body+="]}";
 //                body+="{\"postalcode\":\"T3R1R8\",\"vin\":\"5N1DL0MM7KC522787\",\"vehicleHints\":{\"TRIM\":\"AWD Pure\",\"MODEL\":\"QX60\",\"MODEL_CODE\":\"J6XG19\"}}";
                 System.out.println("body = " + body);
                 rsd.addingStringBodyToPostRequest(body);
                 Thread.sleep(3000);
                 rsd.andPerformThePostRequest();
-                response = ResponseHolder.getResponseBody();
+                String response = ResponseHolder.getResponseBody();
                 responses.add(response);
-                body="{\"vehicleAndPostalcodeFilters\":[";
+                body ="{\"vehicleAndPostalcodeFilters\":[";
             }
 
         }
@@ -338,10 +378,14 @@ public class DownloadStepDef extends base {
 
     @Then("^the total Number of mappings should be equalsIgnoreCase$")
     public void theTotalNumberOfMappingsShouldBeEqualsIgnoreCase() {
-        System.out.println(vehicleGroupVinsSize + " = " + vehicleGroupVinsSize );
-        Assert.assertEquals(vehicleGroupVinsSize,vehicleGroupVinsSize, String.format(
-                "The total #s of vehicleGroupVinsSize[%d] is not equal to vehicleGroupVinsSize[%d]",vehicleGroupVinsSize,vehicleGroupVinsSize));
+        System.out.println("vehicleGroupVinSize = " + vehicleGroupVinsSize + " = vinVehicleGroupsSize = " + vinVehicleGroupsSize );
+        Assert.assertEquals(vehicleGroupVinsSize,vinVehicleGroupsSize, String.format(
+                "The total #s of vehicleGroupVinsSize[%d] is not equal to vehicleGroupVinsSize[%d]",vehicleGroupVinsSize,vinVehicleGroupsSize));
     }
+
+
+
+
 //    @When("^ForXMLFile$")
 //    public void forXMLFiles() {
 //        for(String fileName : makeFileNames) {

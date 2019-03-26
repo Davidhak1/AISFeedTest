@@ -8,11 +8,12 @@ import io.restassured.path.json.JsonPath;
 import model.*;
 import org.testng.Assert;
 import resources.base;
+import resources.compatibleBase;
 
 import java.util.List;
 import java.util.Random;
 
-public class OperationsStepDef extends base {
+public class OperationsStepDef extends compatibleBase {
 
     private static int numberOfVehicleGroups;
     private static int numberOfVehicleCodes;
