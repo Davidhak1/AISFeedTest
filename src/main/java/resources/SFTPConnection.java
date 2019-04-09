@@ -36,7 +36,9 @@ public class SFTPConnection {
         try {
             session = jsch.getSession(prop.getProperty("ftpUser"), prop.getProperty("ftpUrl"));
             session.setConfig("StrictHostKeyChecking", "no");
-            session.setPassword(prop.getProperty("ftpPassword"));
+//            System.out.println("HERE --> "+ prop.getProperty("ftpPassword"));
+            session.setPassword(Utils.decode(prop.getProperty("ftpPassword")));
+//            System.out.println(Utils.decode(prop.getProperty("ftpPassword")));
             session.connect();
 
             channel = session.openChannel("sftp");
