@@ -26,6 +26,7 @@ public class QueriesCombined {
         } catch (Exception e) {
             System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
             e.printStackTrace();
+            e.printStackTrace();
         } finally {
             mysqlCon.endCon();
             if (feedRunId == null) {

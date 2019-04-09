@@ -86,8 +86,6 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
         initBase();
     }
 
-
-
     @When("^Get the names of all files processed from ais$")
     public void getTheNamesOfAllFilesDownloadedFromAis() {
         processedFileNames = new ArrayList<>();
@@ -107,8 +105,6 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
         System.out.println("allFileNames = "+ processedFileNames + "\n");
 
     }
-
-
 
     @When("^get all nodes having compatibleIncentives tag$")
     public void get_all_nodes_having_compatibleincentives_tag() throws Throwable {
@@ -183,20 +179,20 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
         List<String> accounts;
         List<String> postalCodes;
         String postalCode;
-
+        int i = 0;
 
         Iterator<String> it = incentiveIdRegionMap.keySet().iterator();
         while(it.hasNext()){
             String key = it.next();
             accounts = q_c.getAccoutIdsWithMappedIncentiveId(key);
 
-            System.out.println("\nincentiveId = " + key);
+            System.out.println("\n"+ ++i +")incentiveId = " + key);
 
             postalCodes = new ArrayList<>();
             for(String account: accounts){
-                System.out.println("account = " +  account);
+                System.out.println("  account = " +  account);
                 postalCode = q_n.getPostalCodeWithAccountId(account);
-                System.out.println("postalCode = " + postalCode);
+                System.out.println("  postalCode = " + postalCode);
                 postalCodes.add(postalCode);
             }
 
@@ -367,7 +363,6 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
         System.out.println("zeros = " + zeros);
     }
 
-
     @When("^get the amount of compatibleIncentives for all incentives from IMDB$")
     public void getTheAmountOfCompatibleIncentivesForAllIncentivesFromIMDB() {
         dbCompMap = new HashMap<>();
@@ -408,7 +403,6 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
                     " has more incentives in IMDB[%d] than in xml file[%d]", pair.getKey(), dbCompMap.get(pair.getKey()), pair.getValue()));
         }
     }
-
 
     @Then("^There should be euqal or more items in the db than the total # of items in ais response$")
     public void thereShouldBeEuqalOrMoreItemsInTheDbThanTheTotalOfItemsInAisResponse() {

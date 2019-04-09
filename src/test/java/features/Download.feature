@@ -9,7 +9,7 @@ Feature: Download
   @AIS
   @DB-Download-validation
   Scenario: Load all ais files for the latest feedRunId and make sure we create a file for each subscribed make
-    When Get the id of the latest ABORTED feedRun for AIS_CA
+    When Get the id of the latest SUCCESS feedRun for AIS_CA
     When load all ais files
     When Get the names of all files downloaded from ais
     Then files with following names should be there
@@ -17,6 +17,7 @@ Feature: Download
       | VinsWithNoIncentives.json          |
       | VehicleHints.json                  |
       | ProgramDetails.json                |
+      | RegionIdZipCodes.json              |
 
 
   @AIS
@@ -71,7 +72,7 @@ Feature: Download
 
   @AIS
   @DB_Download-validation
-  Scenario:Test that vehicleGroupsVin and vinVehicleGroups fields contsin the same amount of mapping in each file
+  Scenario:Test that vehicleGroupsVin and vinVehicleGroups fields contain the same amount of mapping in each file
     When Get the names of all make files downloaded from ais
     When Get the number of unique mappings from vehicleGroupVins field
     When Get the number of unique mappings from vinVehicleGroups field

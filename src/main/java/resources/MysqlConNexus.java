@@ -41,7 +41,7 @@ class MysqlConNexus {
 
 
         }catch(Exception e){
-            System.out.println("Something is wrong with initializing MySQL Statement");
+            System.out.println("Something is wrong with initializing MySQL Statement, check the VPN connection");
             System.out.println(e);}
 
         return null;

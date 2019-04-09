@@ -302,8 +302,8 @@ public class DownloadStepDef extends compatibleBase {
                 {
 
                     String stringRecord = record.toString();
-//                    System.out.println("record = " + record);
-//                    System.out.println(make + "  " +field + " field = " + stringRecord.contains(field));
+                    System.out.println("record = " + record);
+                    System.out.println(make + "  " +field + " field = " + stringRecord.contains(field));
                     Assert.assertTrue(!stringRecord.contains(field),String.format("following group contains excess data[%s] --> %s",field,stringRecord));
                 }
 //                System.out.printf("%n%s file contains %d records with field '%s'", make, size,field);
