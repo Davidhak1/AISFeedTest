@@ -145,19 +145,5 @@ public class SFTPConnection {
         }
     }
 
-    public static String decode(String encodeed) {
-
-        String decoded="";
-        for(int i = 0; i<encodeed.length(); i++)
-        {
-            if (i%2==0)
-            {
-                decoded+=encodeed.charAt(i);
-            }
-        }
-
-        return decoded;
-
-    }
 }
 

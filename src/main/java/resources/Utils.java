@@ -135,7 +135,6 @@ public class Utils {
         return xpath;
     }
 
-
     public static String getJsonContentFromFile(String path) {
         String line = null;
         FileInputStream inputStream = null;
@@ -167,7 +166,6 @@ public class Utils {
             return line;
         }
     }
-
 
     public static Integer hasDuplicates(List<Integer> array) {
         boolean duplicates = false;

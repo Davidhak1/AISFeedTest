@@ -92,13 +92,13 @@ public class RestStepDef extends compatibleBase {
         }
 
     }
+
     @When("^adding string api body to post request")
     public void addingStringBodyToPostRequest(String body){
 
             this.stringBody = body;
 
     }
-
 
     @When("^adding basic authentication (.+) (.+)$")
     public void addingAuthenticationVcdaWhatAPrJCtPasswRd(String username, String password) {
@@ -115,6 +115,7 @@ public class RestStepDef extends compatibleBase {
         }
 
     }
+
     @And("^adding following header$")
     public void iAddFollowingHeader(String key, String value) {
 
@@ -122,6 +123,7 @@ public class RestStepDef extends compatibleBase {
 
 
     }
+
     @When("adding following parameters")
     public void adding_following_parameters(DataTable dataTable) {
 
@@ -272,15 +274,6 @@ public class RestStepDef extends compatibleBase {
             Assert.assertTrue(actualLen > length, String.format("The actual length supposed, but is not greater than expected. actual: %d | expected: %d", length, actualLen));
         }
     }
-
-//    @When("^adding to the api path the vin and (.+) of the vehicle$")
-//    public void addingToTheApiPathTheVinAndZipOfTheVehicle(String zip) {
-//
-//        this.url += getVehicleGroup().getVin();
-//        this.url += "/"+zip+".json";
-//
-//    }
-
 
     @Then("^make a call for each make and print the number of postalCodes per regionId for a make$")
     public void printTheNumberOfPostalCodesPerRegionId(DataTable dataTable) {

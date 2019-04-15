@@ -58,7 +58,6 @@ Feature: Compatibility & RegionId Postal Codes
     Given initCompatibility
     Given Operations Initialization
     When get all incentive nodes of the nodes having compability
-    #    When get all incentive nodes
     When get the amount of compatibleIncentives for all incentives from both xml file
     When get the amount of compatibleIncentives for all incentives from IMDB
     Then the incentives in the IMDB should have equal or less compatible incentives than in the xml file
@@ -124,13 +123,13 @@ Feature: Compatibility & RegionId Postal Codes
   @AIS
   @Region
   @RegionIdPostalCodes3
-  Scenario Outline: IncentiveAccountMap test, making sure, we consider the regionIds during published incentives creation
+  Scenario Outline: IncentiveAccountMap test, testing that we make published incentives only with right regionId:zipCode/AccountId mapping
     Given Get the names of all files processed from ais
     Given getting the xml file with index <index>
     Given initCompatibility
     Given Operations Initialization
     When get all incentive nodes
-    When save all thirdPartyIncentiveId regionId maps with limit 200
+    When save all thirdPartyIncentiveId regionId maps with limit 20
     When change thirdpartyIncentiveIds to incentiveId if exist
     When get regionId accountId pairs from RegionIdZipCodes.json file
     Then all the incentives should be mapped only to accounts that are in RegionIdZipCodes.json file new

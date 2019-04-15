@@ -14,10 +14,10 @@
         <protocol>http</protocol>
 
         <!-- title of the document -->
-        <documentTitle>Image Ingester Report</documentTitle>
+        <documentTitle>AIS CA Incentives Feed</documentTitle>
 
         <!-- report name - displayed at top-nav -->
-        <reportName>Image Ingester Test Reporting</reportName>
+        <reportName>AIS CA Incentives Feed Test Reporting</reportName>
 
         <!-- location of charts in the test view -->
         <!-- top, bottom -->
