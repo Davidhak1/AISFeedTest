@@ -147,8 +147,6 @@ Feature: Compatibility & RegionId Postal Codes
       | 9     |
       | 10    |
 
-
-
 #  @AIS
 #  @Region
 #  @RegionIdPostalCodes2
