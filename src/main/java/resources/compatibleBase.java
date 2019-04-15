@@ -18,10 +18,9 @@ public class compatibleBase extends base{
     public static Set<Integer> distinctRegions;
     public static List<Integer> notDistinctRegions;
     public static Map<Integer,Integer> regionZipMap;
+    public static Map<Integer,List<String>> AISregionPostalCodesMap;
     public static int totalPairs;
-
     public static List<String> processedFileNames;
-
     public static Map<String,Integer> regionIdPostalCodePairs;
 
 

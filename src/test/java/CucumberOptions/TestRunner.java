@@ -18,7 +18,6 @@ import java.io.File;
 //        tags = {"@Region"},
         tags = {"@AIS"},
 //		  tags = {"@DB-Response-validation"
-//        tags = {"@Incentives-Services-API"},
         plugin={"com.cucumber.listener.ExtentCucumberFormatter:target/html/report.html"},
         strict = false,
         dryRun = false

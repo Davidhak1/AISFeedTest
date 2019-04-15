@@ -332,6 +332,48 @@ public class RestStepDef extends compatibleBase {
 
     }
 
+    @When("^make a call for each make and save all distinct regionIds with their postalCodes in a map$")
+    public void makeACallForEachMakeAndSaveDistinctRegionIdsWithTheirPostalCodesInAMap(DataTable dataTable) {
+        List<String> makes = new ArrayList<String>();
+
+        for (DataTableRow row : dataTable.getGherkinRows()) {
+            makes.add(row.getCells().get(0));
+        }
+        AISregionPostalCodesMap = new HashMap<Integer, List<String>>();
+        List<String> postalCodes = new ArrayList<>();
+        for(String make : makes) {
+            the_server_endpoint_is("https://incentives.homenetiol.com/v2.6/CA/GetPostalcodesByMake/");
+            adding_to_the_api_path(make);
+            perform_the_get_request();
+            the_response_code_should_be(200);
+            JsonPath responseJsonPath = responseHolder.getResponseJsonPath();
+
+            System.out.println(make);
+            int regionIdsSize = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regioID.size()"));
+            System.out.println(regionIdsSize);
+            for (int i = 0; i < regionIdsSize; i++) {
+                int regionId = responseJsonPath.get(String.format("response.regionPostalcodeGroups.regionID[%d]", i));
+                postalCodes = responseJsonPath.get(String.format("response.regionPostalcodeGroups.postalcodes[%d]", i));
+
+                AISregionPostalCodesMap.put(regionId,postalCodes);
+                System.out.println(regionId + " has "+ AISregionPostalCodesMap.get(regionId).size() + " # of postal codes "  );
+            }
+        }
+
+        System.out.println();
+        int i=1;
+        Iterator entries = AISregionPostalCodesMap.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            int key = (int) entry.getKey();
+            ArrayList<String> value = (ArrayList<String>) entry.getValue();
+            System.out.println(i++ + ")RegionId : " + key + " = " + value.size() + " postal codes\n");
+        }
+
+
+
+
+    }
 
     @Then("^make a call to IS with each regionId we should get the same number of postalCodes in the response as in the db$")
     public void makeACallToISWithEachRegionIdWeShouldGetTheSameNumberOfPostalCodesInTheResponseAsInTheDb() {
@@ -358,6 +400,8 @@ public class RestStepDef extends compatibleBase {
             System.out.println();
         }
     }
+
+
 }
 
 

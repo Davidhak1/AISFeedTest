@@ -220,7 +220,7 @@ public class DownloadStepDef extends compatibleBase {
     }
 
     @When("^Save vehicleHints for those vins with (\\d+) pagination$")
-    public void saveVehicleHintsForThoseVins(int page) throws InterruptedException {
+    public void saveVehicleHintsForThoseVins(int limit) throws InterruptedException {
         String path = prop.getProperty("aisSaveDir");
         String jContnent = getJsonContentFromFile(path + "VehicleHints.json");
         LinkedHashMap<String, String> hint = new LinkedHashMap<>();
@@ -238,13 +238,13 @@ public class DownloadStepDef extends compatibleBase {
             body += hintLine + ",";
             System.out.println("Hint = " + hintLine);
 //            System.out.println("i = "+ i + "   specificVins = " + specificVins.size());
-            if(++i%page==0 || i==specificVins.size()) {
+            if(++i%limit==0 || i==specificVins.size()) {
                 body.substring(0, body.length()-1);
 //                body+="]}";
 //                body+="{\"postalcode\":\"T3R1R8\",\"vin\":\"5N1DL0MM7KC522787\",\"vehicleHints\":{\"TRIM\":\"AWD Pure\",\"MODEL\":\"QX60\",\"MODEL_CODE\":\"J6XG19\"}}";
                 System.out.println("body = " + body);
                 rsd.addingStringBodyToPostRequest(body);
-                Thread.sleep(3000);
+//                Thread.sleep(3000);
                 rsd.andPerformThePostRequest();
                 String response = ResponseHolder.getResponseBody();
                 responses.add(response);

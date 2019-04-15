@@ -1,5 +1,6 @@
 package stepDefinitions;
 
+import com.jayway.jsonpath.JsonPath;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -27,8 +28,7 @@ import resources.ResponseHolder;
 import resources.base;
 import resources.compatibleBase;
 
-import static resources.Utils.getUniqueIdModel;
-import static resources.Utils.getUniqueIdYear;
+import static resources.Utils.*;
 import static resources.compatibleBase.*;
 
 
@@ -42,12 +42,13 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
     private Set<String> parentIds;
     private Map<String, Integer> dbCompMap;
     private Map<String, Integer> xmlCompMap;
-    private Map<String, String> tpIncentiveRegionMap;
-    private Map<String, String> incentiveIdRegionMap;
-    private Map<String, List<String>> incentiveIdZipCodes;
-    private Map<String, List<String>> regionIdPostalCodes;
+    private Map<String, List<String>> tpIncentiveRegionMap;
+    private Map<String, List<String>> incentiveIdRegionMap;
+    //    private Map<String, List<String>> incentiveIdZipCodes;
+//    private Map<String, List<String>> regionIdPostalCodes;
+    private Map<Integer, List<String>> savedRegionToZipsMapping;
+    private Map<Integer, List<String>> savedRegionToAccountsMapping;
     private RestStepDef rsd;
-
 
 
     @Given("^get the xml file (.+)$")
@@ -60,21 +61,20 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
 
         int maxLength = processedFileNames.size();
         int index = Integer.parseInt(i);
-        if(index+1>maxLength)
-        {
-            index = maxLength-1;
+        if (index + 1 > maxLength) {
+            index = maxLength - 1;
         }
 
         String fileName = processedFileNames.get(index);
-        System.out.printf("%nChecking processed filed = %s%n%n",fileName);
-        xmlFile = prop.getProperty("aisProcessSaveDir")+fileName;
+        System.out.printf("%nChecking processed filed = %s%n%n", fileName);
+        xmlFile = prop.getProperty("aisProcessSaveDir") + fileName;
 
     }
 
     @Given("^initCompatibility$")
     public void initcompatibility() throws Throwable {
 
-        if(xmlFile!=null) {
+        if (xmlFile != null) {
             //Get DOM
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -102,14 +102,14 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
                 System.out.println("Directory " + listOfFiles[i].getName());
             }
         }
-        System.out.println("allFileNames = "+ processedFileNames + "\n");
+        System.out.println("allFileNames = " + processedFileNames + "\n");
 
     }
 
     @When("^get all nodes having compatibleIncentives tag$")
     public void get_all_nodes_having_compatibleincentives_tag() throws Throwable {
         compNodes = (NodeList) xpath.evaluate("//Incentive/CompatibleIncentives", xml, XPathConstants.NODESET);
-        System.out.println("Number of incentives having at least one compatible incentive - " + compNodes.getLength()+ "\n");
+        System.out.println("Number of incentives having at least one compatible incentive - " + compNodes.getLength() + "\n");
 
     }
 
@@ -120,28 +120,39 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
     }
 
     @When("^save all thirdPartyIncentiveId regionId maps with limit (\\d+)$")
-    public void saveAllThirdPartyIncentiveIdRegionIdMaps( int limit) {
+    public void saveAllThirdPartyIncentiveIdRegionIdMaps(int limit) throws XPathExpressionException {
         tpIncentiveRegionMap = new HashMap<>();
         int size = incentiveNodes.getLength();
-        if(size>limit)
-            size =limit;
+        if (size > limit)
+            size = limit;
         int i;
-        String uniqueId, region;
+        String uniqueId;
 
-        for(i = 0; i < size ; i++ )
-        {
+        List<String> regionIds;
+
+        for (i = 0; i < size; i++) {
+            regionIds = new ArrayList<>();
+            boolean lastRegionId = false;
             uniqueId = incentiveNodes.item(i).getFirstChild().getTextContent();
-            System.out.println("uniqueId = " + uniqueId);
-            if(incentiveNodes.item(i).getLastChild().getPreviousSibling().getFirstChild().getFirstChild().getNodeName().equalsIgnoreCase("RegionId")) {
-                region = incentiveNodes.item(i).getLastChild().getPreviousSibling().getFirstChild().getFirstChild().getTextContent();
-            }else {
-                region = incentiveNodes.item(i).getLastChild().getFirstChild().getFirstChild().getTextContent();
+            System.out.println(i + ") uniqueId = " + uniqueId);
+            NodeList dealerRegionNodes;
+
+            // killing logic
+            if (incentiveNodes.item(i).getLastChild().getPreviousSibling().getFirstChild().getFirstChild().getNodeName().equalsIgnoreCase("RegionId")) {
+                    dealerRegionNodes = incentiveNodes.item(i).getLastChild().getPreviousSibling().getChildNodes();
             }
-            System.out.println("regionId = " + region);
+            else {
+                    dealerRegionNodes = incentiveNodes.item(i).getLastChild().getChildNodes();
+            }
+            for(int k = 0; k<dealerRegionNodes.getLength(); k++) {
+//                    System.out.println(k+") "+dealerRegionNodes.item(k).getFirstChild().getNodeName());
+//                    System.out.println(k+") "+dealerRegionNodes.item(k).getFirstChild().getTextContent());
 
-            tpIncentiveRegionMap.put(uniqueId,region);
+                regionIds.add(dealerRegionNodes.item(k).getFirstChild().getTextContent());
+            }
+            tpIncentiveRegionMap.put(uniqueId, regionIds);
         }
-
+//        System.out.println("THIRDPARTYINCENTIVE Region account map \\/\\/" + tpIncentiveRegionMap);
     }
 
     @When("^change thirdpartyIncentiveIds to incentiveId if exist$")
@@ -152,106 +163,101 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
         List<String> incentivesNotSavedInDb = new ArrayList<>();
 
         Iterator<String> it = tpIncentiveRegionMap.keySet().iterator();
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             String key = it.next();
             incentiveId = q_c.getIncentiveIdByThirdPartyId(key);
 //            System.out.printf("%n thirdPartyIncentiveId = %s, incentiveId = %s", key, incentiveId);
-            if(incentiveId!=null)
-            {
-                incentiveIdRegionMap.put(incentiveId,tpIncentiveRegionMap.get(key));
+            if (incentiveId != null) {
+                incentiveIdRegionMap.put(incentiveId, tpIncentiveRegionMap.get(key));
 //                System.out.printf("%n added to incentiveIdMap: key = %s, value =  %s%n", incentiveId, incentiveIdRegionMap.get(incentiveId));
-            }
-            else{
+            } else {
                 incentivesNotSavedInDb.add(key);
             }
         }
-        System.out.printf("%nThe size of IncneitveRegionMap in the conveted file = %d %n",tpIncentiveRegionMap.size());
-        System.out.printf("%nThe size of IncneitveRegionMap saved in the db = %d %n",incentiveIdRegionMap.size());
-        System.out.printf("%n# of incentives not saved in db = %d --> %s",incentivesNotSavedInDb.size(),incentivesNotSavedInDb);
+        System.out.printf("%nThe size of IncneitveRegionMap in the conveted file = %d %n", tpIncentiveRegionMap.size());
+        System.out.printf("%nThe size of IncneitveRegionMap saved in the db = %d %n", incentiveIdRegionMap.size());
+        System.out.printf("%n# of incentives not saved in db = %d --> %s", incentivesNotSavedInDb.size(), incentivesNotSavedInDb);
 
     }
 
-    @When("^get the list of postal codes of the accounts mapped to those incentives$")
-    public void getTheListOfPostalCodesOfTheAccountsMappedToThoseIncentives() {
-
-        incentiveIdZipCodes = new HashMap<>();
-        List<String> accounts;
-        List<String> postalCodes;
-        String postalCode;
-        int i = 0;
-
-        Iterator<String> it = incentiveIdRegionMap.keySet().iterator();
-        while(it.hasNext()){
-            String key = it.next();
-            accounts = q_c.getAccoutIdsWithMappedIncentiveId(key);
-
-            System.out.println("\n"+ ++i +")incentiveId = " + key);
-
-            postalCodes = new ArrayList<>();
-            for(String account: accounts){
-                System.out.println("  account = " +  account);
-                postalCode = q_n.getPostalCodeWithAccountId(account);
-                System.out.println("  postalCode = " + postalCode);
-                postalCodes.add(postalCode);
-            }
-
-            incentiveIdZipCodes.put(key,postalCodes);
-        }
-
-
-
-    }
-
-    @When("^save the regionId postalCode mapping in interanl memory$")
-    public void saveTheRegionIdPostalCodeMappingInInteranlMemory() {
-        Set<String> distinctRegions = new HashSet<>();
-        regionIdPostalCodes = new HashMap<>();
-
-        Iterator<String> it = incentiveIdRegionMap.keySet().iterator();
-        while(it.hasNext()) {
-            String key = it.next();
-            String value = incentiveIdRegionMap.get(key);
-            distinctRegions.add(value);
-        }
-
-        for(String regionId : distinctRegions) {
-            rsd = new RestStepDef();
-            rsd.initialization();
-            rsd.the_server_endpoint_is("http://vtqainv-incentivessvc03.int.dealer.com:9620/incentives-services/rest" +
-                    "/api/v1/AisRegionDetailsService/getPostalCodes/" + regionId);
-            rsd.perform_the_get_request();
-            List<String> postalCodes = ResponseHolder.getResponse().jsonPath().getList("$");
-//            System.out.println(postalCodes.size());
-
-            regionIdPostalCodes.put(regionId,postalCodes);
-        }
-
-    }
-
-    @Then("^the regionId of an incentive should contain the postalCodes of the accounts mapped to the incentive$")
-    public void theRegionIdOfAnIncentiveShouldContainThePostalCodesOfTheAccountsMappedToTheIncentive() {
-
-        List<String> dbZipCodes;
-        List<String> allPostalCodes;
-        String regionId;
-
-        Iterator<String> it = incentiveIdRegionMap.keySet().iterator();
-        while(it.hasNext()) {
-            String key = it.next();
-            regionId = incentiveIdRegionMap.get(key);
-            dbZipCodes = incentiveIdZipCodes.get(key);
-            allPostalCodes = regionIdPostalCodes.get(regionId);
-            for(String zipCode: dbZipCodes)
-            {
-                System.out.printf("%nallPostalCodes.contains(zipCode) = %s for regionId %s and zipCode %s for incentiveId = %s",
-                        allPostalCodes.contains(zipCode),regionId,zipCode,key);
-
-                Assert.assertTrue(allPostalCodes.contains(zipCode),String.format("regionId %s doesn't contain postal " +
-                        "code %s for incentiveId = %s",regionId, zipCode, key));
-            }
-        }
-    }
+//    @When("^get the list of postal codes of the accounts mapped to those incentives$")
+//    public void getTheListOfPostalCodesOfTheAccountsMappedToThoseIncentives() {
+//
+//        incentiveIdZipCodes = new HashMap<>();
+//        List<String> accounts;
+//        List<String> postalCodes;
+//        String postalCode;
+//        int i = 0;
+//
+//        Iterator<String> it = incentiveIdRegionMap.keySet().iterator();
+//        while(it.hasNext()){
+//            String key = it.next();
+//            accounts = q_c.getAccoutIdsWithMappedIncentiveId(key);
+//
+//            System.out.println("\n"+ ++i +")incentiveId = " + key);
+//
+//            postalCodes = new ArrayList<>();
+//            for(String account: accounts){
+//                System.out.println("  account = " +  account);
+//                postalCode = q_n.getPostalCodeWithAccountId(account);
+//                System.out.println("  postalCode = " + postalCode);
+//                postalCodes.add(postalCode);
+//            }
+//
+//            incentiveIdZipCodes.put(key,postalCodes);
+//        }
+//
+//
+//
+//    }
+//    @When("^save the regionId postalCode mapping in interanl memory$")
+//    public void saveTheRegionIdPostalCodeMappingInInteranlMemory() {
+//        Set<String> distinctRegions = new HashSet<>();
+//        regionIdPostalCodes = new HashMap<>();
+//
+//        Iterator<String> it = incentiveIdRegionMap.keySet().iterator();
+//        while(it.hasNext()) {
+//            String key = it.next();
+//            String value = incentiveIdRegionMap.get(key);
+//            distinctRegions.add(value);
+//        }
+//
+//        for(String regionId : distinctRegions) {
+//            rsd = new RestStepDef();
+//            rsd.initialization();
+//            rsd.the_server_endpoint_is("http://vtqainv-incentivessvc03.int.dealer.com:9620/incentives-services/rest" +
+//                    "/api/v1/AisRegionDetailsService/getPostalCodes/" + regionId);
+//            rsd.perform_the_get_request();
+//            List<String> postalCodes = ResponseHolder.getResponse().jsonPath().getList("$");
+////            System.out.println(postalCodes.size());
+//
+//            regionIdPostalCodes.put(regionId,postalCodes);
+//        }
+//
+//    }
+//    @Then("^the regionId of an incentive should contain the postalCodes of the accounts mapped to the incentive$")
+//    public void theRegionIdOfAnIncentiveShouldContainThePostalCodesOfTheAccountsMappedToTheIncentive() {
+//
+//        List<String> dbZipCodes;
+//        List<String> allPostalCodes;
+//        String regionId;
+//
+//        Iterator<String> it = incentiveIdRegionMap.keySet().iterator();
+//        while(it.hasNext()) {
+//            String key = it.next();
+//            regionId = incentiveIdRegionMap.get(key);
+//            dbZipCodes = incentiveIdZipCodes.get(key);
+//            allPostalCodes = regionIdPostalCodes.get(regionId);
+//            for(String zipCode: dbZipCodes)
+//            {
+//                System.out.printf("%nallPostalCodes.contains(zipCode) = %s for regionId %s and zipCode %s for incentiveId = %s",
+//                        allPostalCodes.contains(zipCode),regionId,zipCode,key);
+//
+//                Assert.assertTrue(allPostalCodes.contains(zipCode),String.format("regionId %s doesn't contain postal " +
+//                        "code %s for incentiveId = %s",regionId, zipCode, key));
+//            }
+//        }
+//    }
 
     @When("^get all incentive nodes of the nodes having compability$")
     public void getAllIncentiveNodesOfTheNodesHavingCompabulity() throws XPathExpressionException {
@@ -407,7 +413,7 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
     @Then("^There should be euqal or more items in the db than the total # of items in ais response$")
     public void thereShouldBeEuqalOrMoreItemsInTheDbThanTheTotalOfItemsInAisResponse() {
         int totalRows = q_c.getTheNumberOfRowsInAsiRegionDetails();
-        System.out.printf("%nTotal Rows in db = %d >= %d Total region:zip mappings from AIS responses", totalRows, totalPairs );
+        System.out.printf("%nTotal Rows in db = %d >= %d Total region:zip mappings from AIS responses", totalRows, totalPairs);
 //        Assert.assertTrue(totalRows > totalPairs, String.format("There are less rows in aisRegionDetails table [%d] " +
 //                " than the mapping in AIS response [%d]",totalRows,totalPairs));
     }
@@ -415,8 +421,8 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
     @Then("^there should be equal or more distinct regionIds in the db than in the ais response$")
     public void thereShouldBeEqualOrMoreDistinctRegionIdsInTheDbThanInTheAisResponse() {
         int distinctRegionIds = q_c.getDistinctRegionIdsFromAisRegionDetails();
-        int aisRegions =  regionZipMap.size();
-        System.out.printf("%nTotal distinct regionIds in (db/aisRespone) > (%d = %d) Total regionIds from AIS responses", distinctRegionIds, aisRegions );
+        int aisRegions = regionZipMap.size();
+        System.out.printf("%nTotal distinct regionIds in (db/aisRespone) > (%d = %d) Total regionIds from AIS responses", distinctRegionIds, aisRegions);
 //        Assert.assertEquals(aisRegions,distinctRegionIds,String.format("The number of AIS distinct regions [%d] is not equal to the db distinct list[%d]",aisRegions,distinctRegionIds));
     }
 
@@ -429,7 +435,7 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
             int value = (int) entry.getValue();
 
             int dbPostalCodes = q_c.getNumberOfPostalCodesWithRegionId(key);
-            System.out.printf("%nFor regionId[%d] --> postalCodes in ais/db --> %d = %d",key,value,dbPostalCodes);
+            System.out.printf("%nFor regionId[%d] --> postalCodes in ais/db --> %d = %d", key, value, dbPostalCodes);
 //            Assert.assertEquals(value,dbPostalCodes,String.format("The postal codes count is not equal for regionId[%d]" +
 //                    " --> postalCodes in ais/db --> %d = %d",key,value,dbPostalCodes));
         }
@@ -440,6 +446,159 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
         regionIdPostalCodePairs = q_c.getDistinctRegionIdAndCountOfPostalCodes();
     }
 
+    @When("get regionId postalCode pairs from (.+) file")
+    public void saveRegionIdPostalCodePairsFromRegionZipCodesJsonFile(String file) {
+        String path = prop.getProperty("aisSaveDir");
+        savedRegionToZipsMapping = new HashMap<>();
+        List savedPstalCodes = new ArrayList<String>();
 
+        String jContnent = getJsonContentFromFile(path + file);
 
+        List<Integer> regionIds = JsonPath.read(jContnent, "*.regionId");
+        System.out.println("regionIds = " + regionIds);
+
+        for (int i = 0; i < regionIds.size(); i++) {
+
+            List<Integer> region = JsonPath.read(jContnent, String.format("$.[?(@.regionId == %d)].regionId", regionIds.get(i)));
+
+            List<LinkedHashMap<String, String>> postalCodes = JsonPath.read(jContnent, String.format("$.[?(@.regionId == %d)].zipCodeAccountIds", region.get(0)));
+
+            System.out.println();
+            List<String> zips = new ArrayList<>();
+
+            for (LinkedHashMap postalCode : postalCodes) {
+                for (Object key : postalCode.keySet()) {
+                    zips.add(key.toString());
+                }
+            }
+
+            savedRegionToZipsMapping.put(region.get(0), zips);
+            System.out.println("regionId = " + region);
+            System.out.println("postalCodes = " + postalCodes);
+            System.out.println("zips = " + zips);
+        }
+        System.out.println("\nFinal map of saved regionZip mapping \\/\\/");
+        System.out.println(savedRegionToZipsMapping);
+    }
+
+    @When("get regionId accountId pairs from (.+) file")
+    public void saveRegionIdAccountIdPairsFromRegionIdZipCodesJsonFile(String file) {
+        String path = prop.getProperty("aisSaveDir");
+        savedRegionToAccountsMapping = new HashMap<>();
+
+        String jContnent = getJsonContentFromFile(path + file);
+
+        List<Integer> regionIds = JsonPath.read(jContnent, "*.regionId");
+        System.out.println("regionIds = " + regionIds);
+
+        for (int i = 0; i < regionIds.size(); i++) {
+
+            List<Integer> region = JsonPath.read(jContnent, String.format("$.[?(@.regionId == %d)].regionId", regionIds.get(i)));
+
+            List<LinkedHashMap<String, String>> postalCodes = JsonPath.read(jContnent, String.format("$.[?(@.regionId == %d)].zipCodeAccountIds", region.get(0)));
+
+            System.out.println();
+            List<String> accounts = new ArrayList<>();
+
+            for (LinkedHashMap postalCode : postalCodes) {
+                for (Object value : postalCode.values()) {
+                    accounts.add(value.toString());
+                }
+            }
+
+            savedRegionToAccountsMapping.put(region.get(0), accounts);
+            System.out.println("regionId = " + region);
+            System.out.println("postalCodes = " + postalCodes);
+            System.out.println("accounts = " + accounts);
+        }
+        System.out.println("\nFinal map of saved regionAccount mapping \\/\\/");
+        System.out.println(savedRegionToAccountsMapping);
+
+    }
+
+    @Then("^the postal codes of all regionIds in the saved file should be present in the postal codes of the same regionId in the AIS response$")
+    public void thePostalCodesOfAllRegionIdsInTheSavedFileShouldBePresentInThePostalCodesOfTheSameRegionIdInTheAISResponse() {
+        boolean contains = false;
+        for (Map.Entry<Integer, List<String>> entry : savedRegionToZipsMapping.entrySet()) {
+            for (String zip : entry.getValue()) {
+                List<String> AISZips = AISregionPostalCodesMap.get(entry.getKey());
+                Assert.assertNotNull(AISZips, String.format("We didn't get any response with regionId = %s from AIS API, " +
+                        "Check if we queried AIS for all the makes for which we have accounts", entry.getKey()));
+                contains = AISZips.contains(zip);
+                System.out.printf("%nAIS Zips for regionId %s contains our saved zip %s = %b ", entry.getKey(), zip, contains);
+                Assert.assertTrue(contains, String.format("AIS does not contain ZIP[%s] for regionId %s, but the zip is present in " +
+                        "RegionIdZipCodes.json file ", zip, entry.getKey()));
+
+            }
+        }
+
+    }
+
+//    @Then("all the incentives should be mapped only to accounts that are in RegionIdZipCodes.json file")
+//    public void allTheIncentivesShouldBeMappedOnlyToAccountsThatAreInRegionIdZipCodesJsonFile() {
+//
+//        List<String> DBaccountsMapped;
+//        String savedAccountsMapped;
+//
+//        String incentiveId, incentiveRegionId;
+//
+//        //Iterating through every single incentive (key=incentiveId, value=regionId)
+//        for (Map.Entry<String, String> entry : incentiveIdRegionMap.entrySet()) {
+//            incentiveId = entry.getKey();
+//            incentiveRegionId = entry.getValue();
+//
+//            System.out.println("IncentiveId = " + incentiveId + ", ConvertorRegion = " + incentiveRegionId);
+//            DBaccountsMapped = q_c.getAccoutIdsWithMappedIncentiveId(incentiveId);
+//            System.out.println("Incentive ->" + incentiveId + "DB Mapped accounts ->" + DBaccountsMapped);
+//
+//            savedAccountsMapped = savedRegionToAccountsMapping.get(Integer.parseInt(incentiveRegionId)).toString();
+//            for (String DBaccountId : DBaccountsMapped) {
+//                System.out.println("savedAccountsMapped = " + savedAccountsMapped);
+//                System.out.printf("%nsavedAccountsMapped.contains(DBaccountId[%s]) = %b", DBaccountId,
+//                        savedAccountsMapped.contains(DBaccountId));
+//
+//                Assert.assertTrue(savedAccountsMapped.contains(DBaccountId), String.format("For regionId[%s] " +
+//                                "RegionIdZipCodes file doesn't contain account [%s], but there is an incentive with " +
+//                                "the same regionId mapped to the same account in DB. IncentiveId = [%s]",
+//                        incentiveRegionId, DBaccountId, incentiveId));
+//            }
+//        }
+//    }
+
+    @Then("all the incentives should be mapped only to accounts that are in RegionIdZipCodes.json file new")
+    public void allTheIncentivesShouldBeMappedOnlyToAccountsThatAreInRegionIdZipCodesJsonFileNew() {
+
+        List<String> DBaccountsMapped;
+        String savedAccountsMapped ="";
+
+        String incentiveId;
+        List<String> incentiveRegionId;
+
+        //Iterating through every single incentive (key=incentiveId, value=regionId)
+        for (Map.Entry<String, List<String>> entry : incentiveIdRegionMap.entrySet()) {
+            incentiveId = entry.getKey();
+            incentiveRegionId = entry.getValue();
+
+            System.out.println("IncentiveId = " + incentiveId + ", ConvertorRegion = " + incentiveRegionId);
+            DBaccountsMapped = q_c.getAccoutIdsWithMappedIncentiveId(incentiveId);
+            System.out.println("Incentive ->" + incentiveId + "DB Mapped accounts ->" + DBaccountsMapped);
+
+            System.out.println("Here is the incentives regionId " + incentiveRegionId);
+            for(String regionId: incentiveRegionId) {
+                System.out.println("Here is the regionId -->" + regionId);
+                savedAccountsMapped += savedRegionToAccountsMapping.get(Integer.parseInt(regionId)).toString();
+            }
+
+            for (String DBaccountId : DBaccountsMapped) {
+                System.out.println("savedAccountsMapped = " + savedAccountsMapped);
+                System.out.printf("%nsavedAccountsMapped.contains(DBaccountId[%s]) = %b", DBaccountId,
+                        savedAccountsMapped.contains(DBaccountId));
+
+                Assert.assertTrue(savedAccountsMapped.contains(DBaccountId), String.format("For regionId[%s] " +
+                                "RegionIdZipCodes file doesn't contain account [%s], but there is an incentive with " +
+                                "the same regionId mapped to the same account in DB. IncentiveId = [%s]",
+                        incentiveRegionId, DBaccountId, incentiveId));
+            }
+        }
+    }
 }
