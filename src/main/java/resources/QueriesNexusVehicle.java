@@ -6,7 +6,7 @@ import java.sql.Statement;
 
 public class QueriesNexusVehicle {
 
-    private MysqlConNexus mysqlCon= new MysqlConNexus();
+    private MysqlConNexus mysqlCon = new MysqlConNexus();
 
     public int getNumberOfVehiclesWithAccountIdOemAndNewAndNotRemoved(String parentId, String make) {
         Statement stmt = mysqlCon.getStatement();
@@ -45,7 +45,7 @@ public class QueriesNexusVehicle {
 
 
         }catch (Exception e){
-            System.out.println("------------------EXCEPTION IN THE QUERIES CLASS-------------------");
+            System.out.println("--------------------------EXCEPTION IN THE QUERIES CLASS-------------------");
             e.printStackTrace();
         }
 

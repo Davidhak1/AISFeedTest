@@ -115,7 +115,6 @@ public class DownloadStepDef extends compatibleBase {
         }
     }
 
-
     @When("^Get the names of all make files downloaded from ais$")
     public void getTheNamesOfAllMakeFilesDownloadedFromAis() {
         makeFileNames = new ArrayList<>();
@@ -382,8 +381,6 @@ public class DownloadStepDef extends compatibleBase {
         Assert.assertEquals(vehicleGroupVinsSize,vinVehicleGroupsSize, String.format(
                 "The total #s of vehicleGroupVinsSize[%d] is not equal to vehicleGroupVinsSize[%d]",vehicleGroupVinsSize,vinVehicleGroupsSize));
     }
-
-
 
 
 //    @When("^ForXMLFile$")

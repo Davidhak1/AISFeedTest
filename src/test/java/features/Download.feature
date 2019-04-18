@@ -47,7 +47,6 @@ Feature: Download
     When Save vehicleHints for those vins with 100 pagination
     Then each vin should have more than 2 vehicleGroups
 
-
   @AIS
   @DB_Download-validation
   Scenario:Test that we don't save data that we are not going to use

@@ -61,7 +61,6 @@ Feature: Compatibility & RegionId Postal Codes
     When get the amount of compatibleIncentives for all incentives from both xml file
     When get the amount of compatibleIncentives for all incentives from IMDB
     Then the incentives in the IMDB should have equal or less compatible incentives than in the xml file
-
     Examples:
       | index |
       | 0     |
@@ -120,6 +119,7 @@ Feature: Compatibility & RegionId Postal Codes
     Then the postal codes of all regionIds in the saved file should be present in the postal codes of the same regionId in the AIS response
 
 
+
   @AIS
   @Region
   @RegionIdPostalCodes3
@@ -129,12 +129,13 @@ Feature: Compatibility & RegionId Postal Codes
     Given initCompatibility
     Given Operations Initialization
     When get all incentive nodes
-    When save all thirdPartyIncentiveId regionId maps with limit 20
+    When save all thirdPartyIncentiveId regionId maps with limit 200
     When change thirdpartyIncentiveIds to incentiveId if exist
     When get regionId accountId pairs from RegionIdZipCodes.json file
     Then all the incentives should be mapped only to accounts that are in RegionIdZipCodes.json file new
     Examples:
       | index |
+      | 0     |
       | 1     |
       | 2     |
       | 3     |
@@ -146,16 +147,10 @@ Feature: Compatibility & RegionId Postal Codes
       | 9     |
       | 10    |
 
-#  @AIS
-#  @Region
-#  @RegionIdPostalCodes2
-#  Scenario: Incentives Services WebService API test (making sure we get all the postalCodes that exist in the db for a regionId)
-#    Given Initialization
-#    Given initCompatibility
-#    When get the distinct postalCodes with the amount of regionIDs from the db
-#    Then make a call to IS with each regionId we should get the same number of postalCodes in the response as in the db
 
-#
+
+
+
 #  @AIS
 #  @RegionLoader
 #  @FiveStarCheck
@@ -179,7 +174,24 @@ Feature: Compatibility & RegionId Postal Codes
 #      | 2     |
 #      | 3     |
 #      | 4     |
+
+
+
+
+#  @AIS
+#  @Region
+#  @RegionIdPostalCodes2
+#  Scenario: Incentives Services WebService API test (making sure we get all the postalCodes that exist in the db for a regionId)
+#    Given Initialization
+#    Given initCompatibility
+#    When get the distinct postalCodes with the amount of regionIDs from the db
+#    Then make a call to IS with each regionId we should get the same number of postalCodes in the response as in the db
 #
+#
+
+
+
+
 #  @AIS
 #  @Region
 #  @RegionIdPostalCodes1
