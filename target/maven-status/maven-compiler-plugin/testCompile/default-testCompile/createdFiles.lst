@@ -1,0 +1,4 @@
+stepDefinitions/DisclaimerStepDef.class
+stepDefinitions/OperationsStepDef.class
+stepDefinitions/RestStepDef.class
+CucumberOptions/TestRunner.class

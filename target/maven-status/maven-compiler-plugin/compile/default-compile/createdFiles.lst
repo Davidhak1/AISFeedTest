@@ -1,0 +1,17 @@
+resources/base.class
+model/VehicleGroup.class
+model/AISIncentive.class
+resources/QueriesAISIncentive.class
+model/VehicleCode.class
+model/ProgramLocal.class
+model/CashIncentive.class
+resources/QueriesNexusVehicle.class
+model/VehicleGroupMatchDetail.class
+resources/MysqlConNexus.class
+model/ProgramLocalDescription.class
+resources/ResponseHolder.class
+resources/QueriesCombined.class
+resources/MysqlConAIS.class
+resources/Utils.class
+resources/MysqlConIMDB.class
+model/IMDBVehicle.class
