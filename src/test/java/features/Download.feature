@@ -63,6 +63,7 @@ Feature: Download
 
   @AIS
   @DB_Download-validation
+    @Download_5
   Scenario:Test that we don't have any duplicate vehicleGroups in the files
     When Get the names of all make files downloaded from ais
     When Get the vehicleGroups from the files

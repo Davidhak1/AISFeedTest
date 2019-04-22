@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-class MysqlConAIS {
+class MysqlConAIS extends base{
 
     public static Statement stmt;
     public static Properties prop;
@@ -24,17 +24,22 @@ class MysqlConAIS {
         prop = new Properties();
 
         try{
-            FileInputStream fis = new FileInputStream("src/main/java/resources/data.properties");
+            FileInputStream fis = new FileInputStream("src/main/java/resources/props/data.properties");
             prop.load(fis);
-
-            mysqlUrl = "jdbc:mysql://"+prop.getProperty("aisUrl")+"/" + prop.getProperty("aisDBName");
+        if(testEnvironment==null) {
+            mysqlUrl = "jdbc:mysql://" + prop.getProperty("aisUrl") + "/" + prop.getProperty("aisDBName");
             user = prop.getProperty("aisUser");
             password = prop.getProperty("aisPass");
+        } else
+        {
+            mysqlUrl = "jdbc:mysql://" + testEnvironment.aisUrl() + "/" + testEnvironment.aisDBName();
+            user = testEnvironment.aisUser();
+            password = testEnvironment.aisPass();
 
+        }
 //            Class.forName("com.mysql.cj.jdbc.Driver");
 
-            con=DriverManager.getConnection(
-                    mysqlUrl,user,password);
+            con=DriverManager.getConnection(mysqlUrl,user,password);
             stmt=con.createStatement();
 
             return stmt;

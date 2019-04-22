@@ -67,7 +67,13 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
 
         String fileName = processedFileNames.get(index);
         System.out.printf("%nChecking processed filed = %s%n%n", fileName);
-        xmlFile = prop.getProperty("aisProcessSaveDir") + fileName;
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisProcessSaveDir();
+        }else{
+            path = prop.getProperty("aisProcessSaveDir");
+        }
+        xmlFile = path + fileName;
 
     }
 
@@ -91,7 +97,14 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
         processedFileNames = new ArrayList<>();
         initBase();
 
-        File folder = new File(prop.getProperty("aisProcessSaveDir"));
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisProcessSaveDir();
+        }else{
+            path = prop.getProperty("aisProcessSaveDir");
+        }
+
+        File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {
@@ -450,7 +463,12 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
 
     @When("get regionId postalCode pairs from (.+) file")
     public void saveRegionIdPostalCodePairsFromRegionZipCodesJsonFile(String file) {
-        String path = prop.getProperty("aisSaveDir");
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisSaveDir();
+        }else{
+            path = prop.getProperty("aisSaveDir");
+        }
         savedRegionToZipsMapping = new HashMap<>();
         List savedPstalCodes = new ArrayList<String>();
 
@@ -485,7 +503,12 @@ public class CompatibilityAndRegionsStepDef extends compatibleBase {
 
     @When("get regionId accountId pairs from (.+) file")
     public void saveRegionIdAccountIdPairsFromRegionIdZipCodesJsonFile(String file) {
-        String path = prop.getProperty("aisSaveDir");
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisSaveDir();
+        }else{
+            path = prop.getProperty("aisSaveDir");
+        }
         savedRegionToAccountsMapping = new HashMap<>();
 
         String jContnent = getJsonContentFromFile(path + file);

@@ -16,6 +16,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import static resources.Utils.getTheRightFolderName;
+import static resources.base.testEnvironment;
 
 public class SFTPConnection {
     public static Properties prop;
@@ -28,17 +29,30 @@ public class SFTPConnection {
 
     public static void SFTPCon() throws Exception {
 
-        prop = Utils.initProp("src/main/java/resources/data.properties");
+        prop = Utils.initProp("src/main/java/resources/props/data.properties");
 
         jsch = new JSch();
         session = null;
+        String ftpUser;
+        String ftpUrl;
+        String ftpPassword;
 
         try {
-            session = jsch.getSession(prop.getProperty("ftpUser"), prop.getProperty("ftpUrl"));
+            if(testEnvironment == null) {
+                ftpUser = prop.getProperty("ftpUser");
+                ftpUrl = prop.getProperty("ftpUrl");
+                ftpPassword = prop.getProperty("ftpPassword");
+            }else{
+                ftpUser = testEnvironment.ftpUSer();
+                ftpUrl = testEnvironment.ftpUrl();
+                ftpPassword = testEnvironment.ftpPassword();
+            }
+
+            session = jsch.getSession(ftpUser, ftpUrl);
             session.setConfig("StrictHostKeyChecking", "no");
-//            System.out.println("HERE --> "+ prop.getProperty("ftpPassword"));
-            session.setPassword(Utils.decode(prop.getProperty("ftpPassword")));
-//            System.out.println(Utils.decode(prop.getProperty("ftpPassword")));
+
+            session.setPassword(Utils.decode(ftpPassword));
+
             session.connect();
 
             channel = session.openChannel("sftp");
@@ -55,8 +69,14 @@ public class SFTPConnection {
         try {
 
             SFTPCon();
-            String path = prop.getProperty("ais-base-path");
-            String savePath = prop.getProperty("aisSaveDir");
+            String path, savePath;
+            if(testEnvironment != null) {
+                path = testEnvironment.ais_base_path();
+                savePath = testEnvironment.aisSaveDir();
+            }else{
+                path = prop.getProperty("ais-base-path");
+                savePath = prop.getProperty("aisSaveDir");
+            }
 
             List<String> fileNames = ls(path);
             System.out.println(fileNames);
@@ -92,8 +112,16 @@ public class SFTPConnection {
         try {
 
             SFTPCon();
-            String path = prop.getProperty("ais-base-path");
-            String savePath = prop.getProperty("aisProcessSaveDir");
+
+            String path, savePath;
+            if(testEnvironment == null) {
+                path = prop.getProperty("ais-base-path");
+                savePath = prop.getProperty("aisProcessSaveDir");
+            } else{
+                path = testEnvironment.ais_base_path();
+                savePath = testEnvironment.aisProcessSaveDir();
+            }
+
 
             List<String> fileNames = ls(path);
             System.out.println(fileNames);

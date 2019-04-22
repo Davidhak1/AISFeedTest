@@ -129,7 +129,7 @@ Feature: Compatibility & RegionId Postal Codes
     Given initCompatibility
     Given Operations Initialization
     When get all incentive nodes
-    When save all thirdPartyIncentiveId regionId maps with limit 200
+    When save all thirdPartyIncentiveId regionId maps with limit 20
     When change thirdpartyIncentiveIds to incentiveId if exist
     When get regionId accountId pairs from RegionIdZipCodes.json file
     Then all the incentives should be mapped only to accounts that are in RegionIdZipCodes.json file new

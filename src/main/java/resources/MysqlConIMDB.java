@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.sql.*;
 import java.util.Properties;
 
-class MysqlConIMDB {
+class MysqlConIMDB extends base {
 
     public static Statement stmt;
     public static Properties prop;
@@ -21,13 +21,20 @@ class MysqlConIMDB {
         prop = new Properties();
 
         try{
-            FileInputStream fis = new FileInputStream("src/main/java/resources/data.properties");
+            FileInputStream fis = new FileInputStream("src/main/java/resources/props/data.properties");
             prop.load(fis);
 
-            mysqlUrl = "jdbc:mysql://"+prop.getProperty("mysqlUrl")+"/" + prop.getProperty("dbName");
-            user = prop.getProperty("mysqlUser");
-            password = prop.getProperty("mysqlPass");
 
+            if(testEnvironment==null) {
+                mysqlUrl = "jdbc:mysql://"+prop.getProperty("mysqlUrl")+"/" + prop.getProperty("dbName");
+                user = prop.getProperty("mysqlUser");
+                password = prop.getProperty("mysqlPass");
+            } else {
+                mysqlUrl = "jdbc:mysql://" + testEnvironment.mysqlUrl() + "/" + testEnvironment.dbName();
+                user = testEnvironment.mysqlUser();
+                password = testEnvironment.mysqlPass();
+
+            }
 //            Class.forName("com.mysql.cj.jdbc.Driver");
 
             con=DriverManager.getConnection(

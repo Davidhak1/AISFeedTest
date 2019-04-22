@@ -9,7 +9,12 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 import gherkin.formatter.model.DataTableRow;
+import org.aeonbits.owner.ConfigFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Parameters;
 import org.w3c.dom.NodeList;
 import resources.*;
 
@@ -36,13 +41,11 @@ public class DownloadStepDef extends compatibleBase {
     private int vehicleGroupVinsSize;
     private int vinVehicleGroupsSize;
 
-
     @Given("^Download Initialization$")
     public void operInitialization() {
-//        System.out.println("Inside Download Init ---------------");
         initBase();
-
     }
+
 
     @When("^load all ais files$")
     public void loadAllAisFiles() {
@@ -78,7 +81,13 @@ public class DownloadStepDef extends compatibleBase {
     @When("^Get the names of all files downloaded from ais$")
     public void getTheNamesOfAllFilesDownloadedFromAis() {
         allFileNames = new ArrayList<>();
-        File folder = new File(prop.getProperty("aisSaveDir"));
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisSaveDir();
+        }else{
+            path = prop.getProperty("aisSaveDir");
+        }
+        File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {
@@ -118,7 +127,13 @@ public class DownloadStepDef extends compatibleBase {
     @When("^Get the names of all make files downloaded from ais$")
     public void getTheNamesOfAllMakeFilesDownloadedFromAis() {
         makeFileNames = new ArrayList<>();
-        File folder = new File(prop.getProperty("aisSaveDir"));
+        File folder;
+        if(testEnvironment != null) {
+            folder = new File(testEnvironment.aisSaveDir());
+        }else{
+            folder = new File(prop.getProperty("aisSaveDir"));
+        }
+        System.out.println("\n\n THE PATH OF THE FOLDER ---->" + folder.getPath());
         File[] listOfFiles = folder.listFiles();
 
         for (int i = 0; i < listOfFiles.length; i++) {
@@ -155,7 +170,13 @@ public class DownloadStepDef extends compatibleBase {
 
     @When("^Get the total number of vehicles from the files$")
     public void getTheTotalNumberOfVehiclesFromTheFiles() {
-        String path = prop.getProperty("aisSaveDir");
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisSaveDir();
+        }else{
+            path = prop.getProperty("aisSaveDir");
+        }
+
         int size;
 
         for (String make : makeFileNames) {
@@ -183,8 +204,13 @@ public class DownloadStepDef extends compatibleBase {
 
     @When("^Get all vins from (.+)$")
     public void getAllVinsFromVinsWithNoVehicleFile(String file) {
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisSaveDir();
+        }else{
+            path = prop.getProperty("aisSaveDir");
+        }
 
-        String path = prop.getProperty("aisSaveDir");
         specificVins = new ArrayList<>();
         int size;
         String jContnent = getJsonContentFromFile(path + file);
@@ -220,8 +246,12 @@ public class DownloadStepDef extends compatibleBase {
 
     @When("^Save vehicleHints for those vins with (\\d+) pagination$")
     public void saveVehicleHintsForThoseVins(int limit) throws InterruptedException {
-        String path = prop.getProperty("aisSaveDir");
-        String jContnent = getJsonContentFromFile(path + "VehicleHints.json");
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisSaveDir();
+        }else{
+            path = prop.getProperty("aisSaveDir");
+        }        String jContnent = getJsonContentFromFile(path + "VehicleHints.json");
         LinkedHashMap<String, String> hint = new LinkedHashMap<>();
         ArrayList<String> array = new ArrayList<>();
         responses = new ArrayList<>();
@@ -290,8 +320,12 @@ public class DownloadStepDef extends compatibleBase {
            fields.add(row.getCells().get(0));
         }
 
-        String path = prop.getProperty("aisSaveDir");
-        ArrayList<HashMap<String,String>> records = new ArrayList<>();
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisSaveDir();
+        }else{
+            path = prop.getProperty("aisSaveDir");
+        }        ArrayList<HashMap<String,String>> records = new ArrayList<>();
 
         for (String make : makeFileNames) {
             for (String field : fields) {
@@ -314,8 +348,12 @@ public class DownloadStepDef extends compatibleBase {
     @When("^Get the vehicleGroups from the files$")
     public void getTheVehicleGroupsFromTheFiles() {
 
-        String path = prop.getProperty("aisSaveDir");
-        ArrayList<Integer> array;
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisSaveDir();
+        }else{
+            path = prop.getProperty("aisSaveDir");
+        }        ArrayList<Integer> array;
         vehicleGroups = new ArrayList<>();
 
         for (String make : makeFileNames) {
@@ -341,8 +379,12 @@ public class DownloadStepDef extends compatibleBase {
     @When("^Get the number of unique mappings from vehicleGroupVins field$")
     public void getTheNumberOfUniqueMappingsFromVehicleGroupVinsField() {
 
-        String path = prop.getProperty("aisSaveDir");
-        List<String> list;
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisSaveDir();
+        }else{
+            path = prop.getProperty("aisSaveDir");
+        }        List<String> list;
         vehicleGroupVinsSize = 0;
         for (String make : makeFileNames) {
             String jContnent = getJsonContentFromFile(path + make);
@@ -360,8 +402,12 @@ public class DownloadStepDef extends compatibleBase {
 
     @When("^Get the number of unique mappings from vinVehicleGroups field$")
     public void getTheNumberOfUniqueMappingsFromVinVehicleGroupsField() {
-        String path = prop.getProperty("aisSaveDir");
-        List<String> list;
+        String path;
+        if(testEnvironment != null) {
+            path = testEnvironment.aisSaveDir();
+        }else{
+            path = prop.getProperty("aisSaveDir");
+        }        List<String> list;
         vinVehicleGroupsSize = 0;
         for (String make : makeFileNames) {
             String jContnent = getJsonContentFromFile(path + make);

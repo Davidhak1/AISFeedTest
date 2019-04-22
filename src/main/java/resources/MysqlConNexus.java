@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import static resources.base.testEnvironment;
+
 class MysqlConNexus {
 
     public  Statement stmt;
@@ -24,13 +26,20 @@ class MysqlConNexus {
         prop = new Properties();
 
         try{
-            FileInputStream fis = new FileInputStream("src/main/java/resources/data.properties");
+            FileInputStream fis = new FileInputStream("src/main/java/resources/props/data.properties");
             prop.load(fis);
 
-            mysqlUrl = "jdbc:mysql://"+prop.getProperty("nexusURL")+"/" + prop.getProperty("NexusDbName");
-            user = prop.getProperty("nexusUser");
-            password = prop.getProperty("nexusPass");
 
+            if(testEnvironment==null) {
+                mysqlUrl = "jdbc:mysql://"+prop.getProperty("nexusURL")+"/" + prop.getProperty("NexusDbName");
+                user = prop.getProperty("nexusUser");
+                password = prop.getProperty("nexusPass");
+            } else {
+                mysqlUrl = "jdbc:mysql://" + testEnvironment.nexusURL() + "/" + testEnvironment.nexusDbName();
+                user = testEnvironment.nexusUser();
+                password = testEnvironment.nexusPass();
+
+            }
 //            Class.forName("com.mysql.cj.jdbc.Driver");
 
             con=DriverManager.getConnection(
